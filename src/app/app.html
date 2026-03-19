@@ -1,2 +1,9 @@
-<app-login-form></app-login-form>
-<router-outlet />
+<div class="app-container">
+  <app-navbar></app-navbar>
+  <div class="main-content">
+    <app-header-component></app-header-component>
+    <main class="page-body">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

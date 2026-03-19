@@ -1,0 +1,67 @@
+@use 'variables' as v;
+
+:host {
+  display: block;
+}
+
+.navbar {
+  width: v.$navbar-width;
+  height: 100%;
+  background-color: v.$bg-secondary;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  .logo-container {
+    padding: 24px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .logo {
+      width: v.$logo-size;
+      height: v.$logo-size;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+
+    .nav-item {
+      width: v.$item-size;
+      height: v.$item-size;
+      background-color: v.$bg-secondary;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: v.$text-main;
+      text-decoration: none;
+      border-radius: v.$border-radius-main;
+      transition: v.$transition;
+
+      &:hover {
+        background-color: v.$bg-tertiary;
+        color: v.$text-active;
+      }
+
+      &.active {
+        background-color: v.$bg-tertiary;
+        color: v.$text-active;
+      }
+
+      .icon {
+        width: v.$icon-size;
+        height: v.$icon-size;
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+@use 'variables' as v;
+
+.app-container {
+  display: flex;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-left: v.$navbar-width;
+}
+
+.page-body {
+  flex: 1;
+  padding-top: v.$header-height;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

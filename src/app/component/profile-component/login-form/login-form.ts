@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../service/auth-service';
+import { AuthService } from '../../../service/auth-service';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 
@@ -37,13 +37,5 @@ export class LoginForm {
     }
   }
 
-  logout() {
-    console.log('Выход...');
-
-    this.authService.logout();
-    window.location.reload();
-  }
-
-  isAuth = signal(this.authService.isAuthenticated());
   text = signal(this.authService.getTokenAuthorities());
 }

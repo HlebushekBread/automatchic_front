@@ -1,0 +1,10 @@
+@if (!isAuthenticated()) {
+  <app-login-form></app-login-form>
+} @else {
+  <span style="color: white">
+    {{ tokenUsername() }}
+    {{ tokenFullName() }}
+    {{ tokenGroup() }}
+  </span>
+  <button (click)="logout()">Выйти</button>
+}

@@ -1,13 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LoginForm } from './component/login-form/login-form';
+import { Navbar } from './component/navbar/navbar';
+import { HeaderComponent } from './component/header-component/header-component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, LoginForm],
+  imports: [RouterOutlet, HeaderComponent, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
-  protected readonly title = signal('automatchic');
-}
+export class App {}

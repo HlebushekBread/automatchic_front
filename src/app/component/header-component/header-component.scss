@@ -1,0 +1,79 @@
+@use 'variables' as v;
+
+$left-width: 20%;
+$center-width: 60%;
+$right-width: 20%;
+
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: calc(100% - #{v.$navbar-width});
+  z-index: 100;
+}
+
+.header {
+  height: v.$header-height;
+  background-color: v.$bg-main;
+  border-bottom: 2px solid v.$bg-secondary;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  font-size: v.$font-size-base;
+
+  .left-section {
+    flex: 0 0 $left-width;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .center-section {
+    flex: 0 0 $center-width;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: v.$text-main;
+  }
+
+  .right-section {
+    flex: 0 0 $right-width;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+
+      .nav-item {
+        width: v.$item-size;
+        height: v.$item-size;
+        background-color: v.$bg-main;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: v.$text-main;
+        text-decoration: none;
+        border-radius: v.$border-radius-main;
+        transition: v.$transition;
+
+        &:hover {
+          background-color: v.$bg-secondary;
+          color: v.$text-active;
+        }
+
+        &.active {
+          background-color: v.$bg-secondary;
+          color: v.$text-active;
+        }
+
+        .icon {
+          width: v.$icon-size;
+          height: v.$icon-size;
+        }
+      }
+    }
+  }
+}
