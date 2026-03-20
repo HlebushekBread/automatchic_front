@@ -1,3 +1,33 @@
-@for (subject of subjectList(); track subject.id) {
-  {{ subject.id }} <br />
-}
+<div class="page-layout">
+  <aside class="filters">
+    <div class="filter-group">
+      <label>Поиск</label>
+      <input
+        type="text"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        placeholder="Введите название..."
+      />
+    </div>
+
+    <div class="filter-group">
+      <label>Тип оценивания</label>
+      <select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
+        <option value="all">Все типы</option>
+        @for (type of gradingTypes; track type) {
+          <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
+        }
+      </select>
+    </div>
+  </aside>
+
+  <main class="subjects-grid">
+    @for (subject of filteredSubjects(); track subject.id) {
+      <app-user-subject-component [subject]="subject"></app-user-subject-component>
+    } @empty {
+      <div class="message">
+        <p style="text-align: center; line-height: 1.6">Ничего не найдено.</p>
+      </div>
+    }
+  </main>
+</div>

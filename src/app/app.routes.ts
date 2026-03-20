@@ -16,7 +16,7 @@ export const routes: Routes = [
     component: SubjectBrowser,
   },
   {
-    path: 'subjects/my',
+    path: 'subjects/view',
     pathMatch: 'full',
     component: SubjectList,
     canActivate: [authGuard],

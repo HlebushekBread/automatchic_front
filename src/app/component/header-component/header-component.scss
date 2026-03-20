@@ -49,7 +49,7 @@ $right-width: 20%;
       .nav-item {
         width: v.$item-size;
         height: v.$item-size;
-        background-color: v.$bg-main;
+        background-color: v.$bg-secondary;
         border: none;
         display: flex;
         align-items: center;
@@ -60,18 +60,34 @@ $right-width: 20%;
         transition: v.$transition;
 
         &:hover {
-          background-color: v.$bg-secondary;
+          background-color: v.$bg-tertiary;
           color: v.$text-active;
         }
 
         &.active {
-          background-color: v.$bg-secondary;
+          background-color: v.$bg-tertiary;
           color: v.$text-active;
+        }
+
+        &:hover .icon,
+        &.active .icon {
+          background-color: v.$text-active;
         }
 
         .icon {
           width: v.$icon-size;
           height: v.$icon-size;
+          background-color: v.$text-main;
+
+          -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+          -webkit-mask-size: contain;
+          mask-size: contain;
+
+          &.profile {
+            -webkit-mask-image: url('/profile.svg');
+            mask-image: url('/profile.svg');
+          }
         }
       }
     }

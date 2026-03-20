@@ -1,0 +1,22 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SubjectViewComponent } from './subject-view-component';
+
+describe('SubjectViewComponent', () => {
+  let component: SubjectViewComponent;
+  let fixture: ComponentFixture<SubjectViewComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SubjectViewComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SubjectViewComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

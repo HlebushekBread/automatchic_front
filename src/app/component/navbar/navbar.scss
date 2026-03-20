@@ -58,9 +58,30 @@
         color: v.$text-active;
       }
 
+      &:hover .icon,
+      &.active .icon {
+        background-color: v.$text-active;
+      }
+
       .icon {
         width: v.$icon-size;
         height: v.$icon-size;
+        background-color: v.$text-main;
+
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+
+        &.view {
+          -webkit-mask-image: url('/list.svg');
+          mask-image: url('/list.svg');
+        }
+
+        &.browse {
+          -webkit-mask-image: url('/browser.svg');
+          mask-image: url('/browser.svg');
+        }
       }
     }
   }

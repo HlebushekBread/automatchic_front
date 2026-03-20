@@ -14,7 +14,7 @@
   background-color: v.$bg-secondary;
   padding: 32px;
   border-radius: v.$border-radius-main;
-  border: 1px solid v.$bg-tertiary;
+  border: none;
   box-shadow: v.$shadow-main;
 }
 
@@ -38,9 +38,9 @@
     .form-input {
       height: v.$control-height;
       background-color: v.$bg-main;
-      border: 1px solid v.$bg-tertiary;
+      border: 2px solid v.$bg-tertiary;
       border-radius: v.$border-radius-secondary;
-      color: v.$text-active;
+      color: v.$text-main;
       padding: 0 16px;
       font-size: v.$font-size-base;
       transition: v.$transition;
@@ -58,23 +58,19 @@
 }
 
 .submit-btn {
-  height: 44px;
+  height: v.$control-height;
   margin-top: 8px;
-  background-color: v.$bg-tertiary;
-  color: v.$text-active;
-  border: none;
+  background-color: v.$bg-secondary;
+  color: v.$text-main;
+  border: 2px solid v.$bg-tertiary;
   border-radius: v.$border-radius-secondary;
-  font-size: 16px;
+  font-size: v.$font-size-small;
   font-weight: 600;
   cursor: pointer;
   transition: v.$transition;
 
   &:hover:not(:disabled) {
-    background-color: lighten(v.$bg-tertiary, 5%);
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.98);
+    background-color: v.$bg-tertiary;
   }
 
   &:disabled {

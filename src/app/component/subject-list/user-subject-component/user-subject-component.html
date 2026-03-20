@@ -1,0 +1,95 @@
+<article class="subject-card">
+  <!-- ЛЕВАЯ ЧАСТЬ: Информация о предмете -->
+  <div class="subject-info">
+    <h2 class="name" title="Название дисциплины (очень длинное)">
+      {{ subject().name }}
+    </h2>
+    <span class="teacher">{{ subject().teacher }}</span>
+    <h2
+      class="publicity"
+      [ngClass]="{
+        public: subject().publicity === 'PUBLIC',
+        private: subject().publicity === 'PRIVATE',
+      }"
+    >
+      {{ publicityTranslation[subject().publicity] }}
+    </h2>
+  </div>
+
+  <section class="tasks-deadline">
+    <span class="title">Ближайшие задания</span>
+    @if (subject().tasks.length > 0) {
+      @for (task of upcomingTasks(); track task.id) {
+        <div class="task-row">
+          <span class="task-name">{{ task.name }}</span>
+          <span class="task-type"> {{ taskTypeTranslation[task.type] }}</span>
+          <span class="task-date"
+            >{{ task.dueDate | date: 'dd.MM' }} ({{ task.dueDate | date: 'EE' }})</span
+          >
+        </div>
+      }
+    } @else {
+      <span class="title">Заданий нет</span>
+    }
+  </section>
+
+  <div class="grading-info">
+    <div class="grading-summary">
+      <div class="score-summary">
+        <div class="current-score">
+          <span>{{ getCurrentScore() }} / {{ subject().gradingMax }}</span>
+        </div>
+        <div class="goal-text">
+          Цель:
+          <span [style.color]="gradeInfo[subject().targetGrade + 2].color">{{
+            subject().targetGrade + 2
+          }}</span>
+          -
+          @if (getMissingScore() > 0) {
+            осталось <span class="active-text">{{ getMissingScore() }}</span>
+          } @else {
+            <span class="active-text">цель достигнута!</span>
+          }
+        </div>
+      </div>
+
+      <div
+        class="grade-badge"
+        [style.background-color]="gradeInfo[getCurrentGrade()].color"
+        [style.color]="gradeInfo[getCurrentGrade()].text"
+      >
+        {{ gradeInfo[getCurrentGrade()].translation }}
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div
+        class="segment seg-less"
+        [style.width.%]="(subject().gradingMin / subject().gradingMax) * 100"
+      ></div>
+      <div
+        class="segment seg-min"
+        [style.width.%]="((subject().grading3 - subject().gradingMin) / subject().gradingMax) * 100"
+      ></div>
+      <div
+        class="segment seg-3"
+        [style.width.%]="((subject().grading4 - subject().grading3) / subject().gradingMax) * 100"
+      ></div>
+      <div
+        class="segment seg-4"
+        [style.width.%]="((subject().grading5 - subject().grading4) / subject().gradingMax) * 100"
+      ></div>
+      <div
+        class="segment seg-5"
+        [style.width.%]="((subject().gradingMax - subject().grading5) / subject().gradingMax) * 100"
+      ></div>
+
+      <div
+        class="cursor"
+        [style.left.%]="Math.min((getCurrentScore() / subject().gradingMax) * 100, 100)"
+      ></div>
+    </div>
+
+    <div></div>
+  </div>
+</article>

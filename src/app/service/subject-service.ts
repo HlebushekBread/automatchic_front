@@ -2,8 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Task } from './task-service';
 import { User } from './user-service';
+
+export const GradingTypeTranslation: Record<string, string> = {
+  CREDIT: 'Зачет',
+  GRADE: 'Оценка',
+  EXAM: 'Экзамен',
+};
+
+export const TaskTypeTranslation: Record<string, string> = {
+  HOMEWORK: 'Домашняя работа',
+  LABWORK: 'Лабораторная работа',
+  TEST: 'Тест',
+};
+
+export const PublicityTranslation: Record<string, string> = {
+  PRIVATE: 'Приватный',
+  PUBLIC: 'Публичный',
+};
 
 export interface Subject {
   id: number;
@@ -16,9 +32,27 @@ export interface Subject {
   grading4: number;
   grading3: number;
   gradingMin: number;
+  targetGrade: number;
   publicity: string;
   user: User;
-  task: Task[];
+  tasks: Task[];
+  Links: Link[];
+}
+
+export interface Task {
+  id: number;
+  name: string;
+  type: string;
+  dueDate: Date;
+  maxGrade: number;
+  receivedGrade: number;
+  gradeWeight: number;
+}
+
+export interface Link {
+  id: number;
+  name: string;
+  fullLink: string;
 }
 
 @Injectable({
