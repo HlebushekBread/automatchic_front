@@ -2,7 +2,7 @@
 
 :host {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
 
   --grade-max: #{v.$grade-max};
@@ -44,7 +44,7 @@
   gap: 30px;
   transition: v.$transition;
 
-  @media (max-width: 1750px) {
+  @media (max-width: 1850px) {
     flex-direction: column;
     gap: 20px;
     max-width: 500px;
@@ -78,28 +78,46 @@
       margin-bottom: 0;
     }
 
-    .publicity {
-      width: fit-content;
-      font-size: v.$font-size-small;
-      text-transform: uppercase;
-      padding: 4px 8px;
-      margin-top: 15px;
-      margin-bottom: 0;
-      border-radius: v.$border-radius-secondary;
-      background-color: v.$bg-main;
-      color: v.$text-main;
-      border: 1px solid v.$bg-tertiary;
+    .badges {
+      display: flex;
+      justify-content: space-between;
 
-      &.public {
-        color: v.$status-green-text;
-        background-color: v.$status-green-bg;
-        border-color: v.$status-green-border;
+      .grading-badge {
+        margin-top: 15px;
+        margin-bottom: 0px;
+        width: fit-content;
+        font-size: v.$font-size-small;
+        text-transform: uppercase;
+        padding: 4px 8px;
+        border-radius: v.$border-radius-secondary;
+        background-color: v.$bg-main;
+        color: v.$text-main;
+        border: 1px solid v.$bg-tertiary;
       }
 
-      &.private {
-        color: v.$status-red-text;
-        background-color: v.$status-red-bg;
-        border-color: v.$status-red-border;
+      .publicity-badge {
+        margin-top: 15px;
+        margin-bottom: 0px;
+        width: fit-content;
+        font-size: v.$font-size-small;
+        text-transform: uppercase;
+        padding: 4px 8px;
+        border-radius: v.$border-radius-secondary;
+        background-color: v.$bg-main;
+        color: v.$text-main;
+        border: 1px solid v.$bg-tertiary;
+
+        &.public {
+          color: v.$status-green-text;
+          background-color: v.$status-green-bg;
+          border-color: v.$status-green-border;
+        }
+
+        &.private {
+          color: v.$status-red-text;
+          background-color: v.$status-red-bg;
+          border-color: v.$status-red-border;
+        }
       }
     }
   }

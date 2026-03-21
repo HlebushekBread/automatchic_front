@@ -59,11 +59,7 @@ $right-width: 20%;
         border-radius: v.$border-radius-main;
         transition: v.$transition;
 
-        &:hover {
-          background-color: v.$bg-tertiary;
-          color: v.$text-active;
-        }
-
+        &:hover,
         &.active {
           background-color: v.$bg-tertiary;
           color: v.$text-active;

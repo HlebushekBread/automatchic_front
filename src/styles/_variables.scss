@@ -11,6 +11,10 @@ $grade-4: #007bff;
 $grade-5: #28a745;
 $grade-max: #8a2be2;
 
+$status-grey-text: $text-main;
+$status-grey-bg: rgba($text-main, 0.1);
+$status-grey-border: rgba($text-main, 0.3);
+
 $status-red-text: $grade-min;
 $status-red-bg: rgba($grade-min, 0.1);
 $status-red-border: rgba($grade-min, 0.3);
@@ -28,15 +32,15 @@ $border-radius-secondary: 10px;
 
 $control-height: 50px;
 
+$transition: all 0.3s ease;
 $shadow-main: 0 8px 24px rgba(0, 0, 0, 0.2);
 
 $logo-size: 40px;
 $item-size: 50px;
 $icon-size: 30px;
-$transition: all 0.3s ease;
 
 $navbar-width: 80px;
 $header-height: 80px;
 
 $font-size-base: 20px;
-$font-size-small: 15px;
+$font-size-small: 16px;

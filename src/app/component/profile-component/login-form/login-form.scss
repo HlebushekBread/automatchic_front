@@ -1,4 +1,5 @@
 @use 'variables' as v;
+@use 'mobile' as m;
 
 :host {
   display: flex;
@@ -22,6 +23,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
 
   .form-group {
     display: flex;
@@ -33,6 +37,9 @@
       font-size: v.$font-size-small;
       font-weight: 500;
       margin-left: 4px;
+      @media (max-width: 768px) {
+        font-size: m.$font-size-small;
+      }
     }
 
     .form-input {
@@ -44,6 +51,11 @@
       padding: 0 16px;
       font-size: v.$font-size-base;
       transition: v.$transition;
+
+      @media (max-width: 768px) {
+        height: m.$control-height;
+        font-size: m.$font-size-small;
+      }
 
       &::placeholder {
         color: rgba(v.$text-main, 0.3);
@@ -68,6 +80,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: v.$transition;
+  @media (max-width: 768px) {
+    height: m.$control-height;
+    font-size: m.$font-size-small;
+  }
 
   &:hover:not(:disabled) {
     background-color: v.$bg-tertiary;

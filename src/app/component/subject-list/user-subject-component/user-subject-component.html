@@ -1,19 +1,23 @@
-<article class="subject-card">
-  <!-- ЛЕВАЯ ЧАСТЬ: Информация о предмете -->
+<div class="subject-card" [routerLink]="'/subjects/view/' + subject().id">
   <div class="subject-info">
     <h2 class="name" title="Название дисциплины (очень длинное)">
       {{ subject().name }}
     </h2>
     <span class="teacher">{{ subject().teacher }}</span>
-    <h2
-      class="publicity"
-      [ngClass]="{
-        public: subject().publicity === 'PUBLIC',
-        private: subject().publicity === 'PRIVATE',
-      }"
-    >
-      {{ publicityTranslation[subject().publicity] }}
-    </h2>
+    <div class="badges">
+      <h1 class="grading-badge" [class]="subject().gradingType.toLowerCase()">
+        {{ gradingTypeTranslation[subject().gradingType] }}
+      </h1>
+      <h1
+        class="publicity-badge"
+        [ngClass]="{
+          public: subject().publicity === 'PUBLIC',
+          private: subject().publicity === 'PRIVATE',
+        }"
+      >
+        {{ publicityTranslation[subject().publicity] }}
+      </h1>
+    </div>
   </div>
 
   <section class="tasks-deadline">
@@ -92,4 +96,4 @@
 
     <div></div>
   </div>
-</article>
+</div>

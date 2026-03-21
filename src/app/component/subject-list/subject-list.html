@@ -19,6 +19,16 @@
         }
       </select>
     </div>
+
+    <div class="filter-group">
+      <label>Публичность</label>
+      <select [ngModel]="selectedPublicity()" (ngModelChange)="selectedPublicity.set($event)">
+        <option value="all">Все типы</option>
+        @for (publicity of publicities; track publicity) {
+          <option [value]="publicity">{{ publicityTranslation[publicity] }}</option>
+        }
+      </select>
+    </div>
   </aside>
 
   <main class="subjects-grid">

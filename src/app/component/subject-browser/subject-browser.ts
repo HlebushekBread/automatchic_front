@@ -33,7 +33,9 @@ export class SubjectBrowser {
   }
 
   filteredSubjects = computed(() => {
-    const query = this.searchQuery().toLowerCase();
+    const query = this.searchQuery()
+      .replace(/[\.\s\-]/g, '')
+      .toLowerCase();
     const type = this.selectedType();
 
     return this.subjectList().filter((subject) => {
@@ -41,15 +43,14 @@ export class SubjectBrowser {
         subject.name.toLowerCase().includes(query) ||
         this.getAbbreviation(subject.name).toLowerCase().includes(query) ||
         subject.teacher.toLowerCase().includes(query) ||
-        this.getAbbreviation(subject.teacher)
-          .toLowerCase()
-          .includes(query.replace(/[\.\s]/g, '')) ||
+        this.getAbbreviation(subject.teacher).toLowerCase().includes(query) ||
         subject.user.fullName.toLowerCase().includes(query) ||
-        this.getAbbreviation(subject.user.fullName)
-          .toLowerCase()
-          .includes(query.replace(/[\.\s]/g, '')) ||
+        this.getAbbreviation(subject.user.fullName).toLowerCase().includes(query) ||
         subject.user.username.toLowerCase().includes(query) ||
-        subject.user.group.toLowerCase().includes(query);
+        subject.user.group
+          .replace(/[\.\s\-]/g, '')
+          .toLowerCase()
+          .includes(query);
       const matchesType = type === 'all' || subject.gradingType === type;
       return matchesSearch && matchesType;
     });

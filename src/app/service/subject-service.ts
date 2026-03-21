@@ -36,7 +36,7 @@ export interface Subject {
   publicity: string;
   user: User;
   tasks: Task[];
-  Links: Link[];
+  links: Link[];
 }
 
 export interface Task {
@@ -55,11 +55,34 @@ export interface Link {
   fullLink: string;
 }
 
+export interface SubjectDto {
+  id: number;
+  name: string;
+  teacher: string;
+  description: string;
+  gradingType: string;
+  gradingMax: number;
+  grading5: number;
+  grading4: number;
+  grading3: number;
+  gradingMin: number;
+  targetGrade: number;
+  publicity: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
   private http = inject(HttpClient);
+
+  getById(preview: boolean, id: number): Observable<Subject> {
+    if (preview) {
+      return this.http.get<Subject>(`${environment.apiUrl}/subjects/preview/${id}`);
+    } else {
+      return this.http.get<Subject>(`${environment.apiUrl}/subjects/view/${id}`);
+    }
+  }
 
   getPublicSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(`${environment.apiUrl}/subjects/public`);
@@ -67,5 +90,9 @@ export class SubjectService {
 
   getUserSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(`${environment.apiUrl}/subjects/user`);
+  }
+
+  saveSubject(data: SubjectDto): Observable<{ id: number }> {
+    return this.http.put<{ id: number }>(`${environment.apiUrl}/subjects/save`, data);
   }
 }

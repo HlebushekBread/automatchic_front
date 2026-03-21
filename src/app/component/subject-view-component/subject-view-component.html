@@ -1,1 +1,56 @@
-<p>subject-view-component works!</p>
+<div>
+  @if (!errorMessage()) {
+    <form style="display: flex" [formGroup]="subjectForm">
+      <div>
+        <input formControlName="id" /><br />
+        <input formControlName="name" /><br />
+        <input formControlName="teacher" /><br />
+        <input formControlName="description" /><br />
+      </div>
+      <div>
+        <select formControlName="gradingType">
+          @for (type of gradingTypes; track type) {
+            <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
+          }</select
+        ><br />
+        <input type="radio" [value]="4" formControlName="targetGrade" />
+        <input formControlName="gradingMax" /><br />
+        <input type="radio" [value]="3" formControlName="targetGrade" />
+        <input formControlName="grading5" /><br />
+        <input type="radio" [value]="2" formControlName="targetGrade" />
+        <input formControlName="grading4" /><br />
+        <input type="radio" [value]="1" formControlName="targetGrade" />
+        <input formControlName="grading3" /><br />
+        <input type="radio" [value]="0" formControlName="targetGrade" />
+        <input formControlName="gradingMin" /><br />
+      </div>
+      <div>
+        <div class="publicity-badge">
+          <input type="hidden" formControlName="publicity" /><br />
+          <div
+            class="publicity-private"
+            [class.active]="subjectForm.get('publicity')?.value === 'PRIVATE'"
+            (click)="switchPublicity('PRIVATE')"
+          >
+            <span>Приватный</span>
+          </div>
+          <div
+            class="publicity-public"
+            [class.active]="subjectForm.get('publicity')?.value === 'PUBLIC'"
+            (click)="switchPublicity('PUBLIC')"
+          >
+            <span>Публичный</span>
+          </div>
+        </div>
+        <button type="submit">Подтвердить</button>
+        <button>Отменить</button>
+        <button>Удалить</button>
+        <button>Редактировать</button>
+      </div>
+    </form>
+  } @else {
+    <div>
+      {{ errorMessage() }}
+    </div>
+  }
+</div>

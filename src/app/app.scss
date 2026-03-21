@@ -11,6 +11,10 @@
   flex-direction: column;
   overflow-y: auto;
   margin-left: v.$navbar-width;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 }
 
 .page-body {

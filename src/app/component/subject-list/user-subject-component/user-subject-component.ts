@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import {
   GradingTypeTranslation,
   PublicityTranslation,
@@ -6,10 +6,11 @@ import {
   TaskTypeTranslation,
 } from '../../../service/subject-service';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-subject-component',
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './user-subject-component.html',
   styleUrl: './user-subject-component.scss',
 })

@@ -1,5 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { GradingTypeTranslation, SubjectService } from '../../service/subject-service';
+import {
+  GradingTypeTranslation,
+  PublicityTranslation,
+  SubjectService,
+} from '../../service/subject-service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserSubjectComponent } from './user-subject-component/user-subject-component';
 import { FormsModule } from '@angular/forms';
@@ -17,9 +21,12 @@ export class SubjectList {
 
   gradingTypeTranslation = GradingTypeTranslation;
   gradingTypes = Object.keys(this.gradingTypeTranslation);
+  publicityTranslation = PublicityTranslation;
+  publicities = Object.keys(this.publicityTranslation);
 
   searchQuery = signal('');
   selectedType = signal('all');
+  selectedPublicity = signal('all');
 
   getAbbreviation(text: string): string {
     if (!text) return '';
@@ -33,25 +40,28 @@ export class SubjectList {
   }
 
   filteredSubjects = computed(() => {
-    const query = this.searchQuery().toLowerCase();
+    const query = this.searchQuery()
+      .replace(/[\.\s\-]/g, '')
+      .toLowerCase();
     const type = this.selectedType();
+    const publicity = this.selectedPublicity();
 
     return this.subjectList().filter((subject) => {
       const matchesSearch =
         subject.name.toLowerCase().includes(query) ||
         this.getAbbreviation(subject.name).toLowerCase().includes(query) ||
         subject.teacher.toLowerCase().includes(query) ||
-        this.getAbbreviation(subject.teacher)
-          .toLowerCase()
-          .includes(query.replace(/[\.\s]/g, '')) ||
+        this.getAbbreviation(subject.teacher).toLowerCase().includes(query) ||
         subject.user.fullName.toLowerCase().includes(query) ||
-        this.getAbbreviation(subject.user.fullName)
-          .toLowerCase()
-          .includes(query.replace(/[\.\s]/g, '')) ||
+        this.getAbbreviation(subject.user.fullName).toLowerCase().includes(query) ||
         subject.user.username.toLowerCase().includes(query) ||
-        subject.user.group.toLowerCase().includes(query);
+        subject.user.group
+          .replace(/[\.\s\-]/g, '')
+          .toLowerCase()
+          .includes(query);
       const matchesType = type === 'all' || subject.gradingType === type;
-      return matchesSearch && matchesType;
+      const matchesPublicity = publicity === 'all' || subject.publicity === publicity;
+      return matchesSearch && matchesType && matchesPublicity;
     });
   });
 }
