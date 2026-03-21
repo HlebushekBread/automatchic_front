@@ -198,19 +198,6 @@
           margin-top: 4px;
         }
       }
-
-      .grade-badge {
-        min-width: 40px;
-        height: 40px;
-        background-color: v.$bg-tertiary;
-        color: #fff;
-        border-radius: v.$border-radius-secondary;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: v.$font-size-base;
-      }
     }
 
     .progress-container {

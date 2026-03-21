@@ -2,11 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import {
   GradingTypeTranslation,
   PublicityTranslation,
+  SubjectDto,
   SubjectService,
 } from '../../service/subject-service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserSubjectComponent } from './user-subject-component/user-subject-component';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-subject-list',
@@ -16,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class SubjectList {
   private subjectService = inject(SubjectService);
+  private router = inject(Router);
 
   subjectList = toSignal(this.subjectService.getUserSubjects(), { initialValue: [] });
 
@@ -64,4 +67,32 @@ export class SubjectList {
       return matchesSearch && matchesType && matchesPublicity;
     });
   });
+
+  isCreateModalOpen = signal(false);
+
+  newSubjectTitle = signal('');
+
+  onCreate(name: string) {
+    this.subjectService
+      .saveSubject({
+        id: 0,
+        name: name || 'Название',
+        teacher: '',
+        description: '',
+        gradingType: 'GRADE',
+        gradingMax: 0,
+        grading5: 0,
+        grading4: 0,
+        grading3: 0,
+        gradingMin: 0,
+        targetGrade: 0,
+        publicity: 'PUBLIC',
+      })
+      .subscribe({
+        next: (response) => {
+          this.isCreateModalOpen.set(false);
+          this.router.navigate(['/subjects/view', response.id]);
+        },
+      });
+  }
 }

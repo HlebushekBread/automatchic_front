@@ -59,6 +59,7 @@
 
       <div
         class="grade-badge"
+        [class.smaller]="gradeInfo[getCurrentGrade()].translation.length > 2"
         [style.background-color]="gradeInfo[getCurrentGrade()].color"
         [style.color]="gradeInfo[getCurrentGrade()].text"
       >
@@ -69,28 +70,36 @@
     <div class="progress-container">
       <div
         class="segment seg-less"
-        [style.width.%]="(subject().gradingMin / subject().gradingMax) * 100"
+        [style.width.%]="(subject().gradingMin / (subject().gradingMax || 1)) * 100"
       ></div>
       <div
         class="segment seg-min"
-        [style.width.%]="((subject().grading3 - subject().gradingMin) / subject().gradingMax) * 100"
+        [style.width.%]="
+          ((subject().grading3 - subject().gradingMin) / (subject().gradingMax || 1)) * 100
+        "
       ></div>
       <div
         class="segment seg-3"
-        [style.width.%]="((subject().grading4 - subject().grading3) / subject().gradingMax) * 100"
+        [style.width.%]="
+          ((subject().grading4 - subject().grading3) / (subject().gradingMax || 1)) * 100
+        "
       ></div>
       <div
         class="segment seg-4"
-        [style.width.%]="((subject().grading5 - subject().grading4) / subject().gradingMax) * 100"
+        [style.width.%]="
+          ((subject().grading5 - subject().grading4) / (subject().gradingMax || 1)) * 100
+        "
       ></div>
       <div
         class="segment seg-5"
-        [style.width.%]="((subject().gradingMax - subject().grading5) / subject().gradingMax) * 100"
+        [style.width.%]="
+          ((subject().gradingMax - subject().grading5) / (subject().gradingMax || 1)) * 100
+        "
       ></div>
 
       <div
         class="cursor"
-        [style.left.%]="Math.min((getCurrentScore() / subject().gradingMax) * 100, 100)"
+        [style.left.%]="Math.min((getCurrentScore() / (subject().gradingMax || 1)) * 100, 100)"
       ></div>
     </div>
 

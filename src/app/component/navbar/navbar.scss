@@ -25,6 +25,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    transition: v.$transition;
 
     .logo {
       width: v.$logo-size;

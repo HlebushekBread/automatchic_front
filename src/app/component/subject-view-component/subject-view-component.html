@@ -1,56 +1,129 @@
-<div>
+<div class="view-card">
   @if (!errorMessage()) {
-    <form style="display: flex" [formGroup]="subjectForm">
-      <div>
-        <input formControlName="id" /><br />
-        <input formControlName="name" /><br />
-        <input formControlName="teacher" /><br />
-        <input formControlName="description" /><br />
+    <form class="subject-form" [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
+      <div class="form-left">
+        <div class="form-header">
+          <input type="hidden" formControlName="id" placeholder="ID" />
+          <label class="form-label">Название</label>
+          <input
+            class="form-input full-width"
+            formControlName="name"
+            placeholder="Название предмета"
+          />
+        </div>
+        <div class="form-content">
+          <div class="form-column">
+            <label class="form-label">Преподаватель</label>
+            <input class="form-input" formControlName="teacher" placeholder="Преподаватель" />
+            <label class="form-label">Описание</label>
+            <textarea
+              class="form-input description"
+              formControlName="description"
+              placeholder="Описание"
+            ></textarea>
+          </div>
+
+          <div class="form-column">
+            <label class="form-label">Оценивание</label>
+            <select class="form-input" formControlName="gradingType" (change)="adjustFields()">
+              @for (type of gradingTypes; track type) {
+                <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
+              }
+            </select>
+
+            <div class="form-group">
+              @for (field of gradeFields; track field.control) {
+                @if (!(field.hideForCredit && isGradingTypeCredit())) {
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <input
+                      class="hidden-radio"
+                      type="radio"
+                      [id]="'radio' + field.grade"
+                      [value]="field.grade"
+                      formControlName="targetGrade"
+                      (change)="adjustFields()"
+                    />
+
+                    <label
+                      class="grade-badge"
+                      [class.smaller]="gradeInfo[field.grade + 2].translation.length > 2"
+                      [style]="
+                        '--grade-color:' +
+                        gradeInfo[field.grade + 2].color +
+                        '; --grade-text:' +
+                        gradeInfo[field.grade + 2].text +
+                        '; border: 2px solid var(--grade-color);'
+                      "
+                      [style.background-color]="gradeInfo[0].color"
+                      [style.color]="gradeInfo[0].text"
+                      [for]="'radio' + field.grade"
+                    >
+                      {{ gradeInfo[field.grade + 2].translation }}
+                    </label>
+
+                    <input
+                      type="number"
+                      class="form-input grading"
+                      [formControlName]="field.control"
+                      (change)="adjustFields()"
+                    />
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <select formControlName="gradingType">
-          @for (type of gradingTypes; track type) {
-            <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
-          }</select
-        ><br />
-        <input type="radio" [value]="4" formControlName="targetGrade" />
-        <input formControlName="gradingMax" /><br />
-        <input type="radio" [value]="3" formControlName="targetGrade" />
-        <input formControlName="grading5" /><br />
-        <input type="radio" [value]="2" formControlName="targetGrade" />
-        <input formControlName="grading4" /><br />
-        <input type="radio" [value]="1" formControlName="targetGrade" />
-        <input formControlName="grading3" /><br />
-        <input type="radio" [value]="0" formControlName="targetGrade" />
-        <input formControlName="gradingMin" /><br />
-      </div>
-      <div>
+
+      <div class="form-column actions">
         <div class="publicity-badge">
-          <input type="hidden" formControlName="publicity" /><br />
+          <input type="hidden" formControlName="publicity" />
           <div
             class="publicity-private"
             [class.active]="subjectForm.get('publicity')?.value === 'PRIVATE'"
-            (click)="switchPublicity('PRIVATE')"
+            [class.disabled]="!(subjectForm.get('publicity')?.value === 'PRIVATE') && !isEdit()"
+            (click)="isEdit() && switchPublicity('PRIVATE')"
           >
-            <span>Приватный</span>
+            <span>{{ publicityTranslation['PRIVATE'].toUpperCase() }}</span>
           </div>
           <div
             class="publicity-public"
             [class.active]="subjectForm.get('publicity')?.value === 'PUBLIC'"
-            (click)="switchPublicity('PUBLIC')"
+            [class.disabled]="!(subjectForm.get('publicity')?.value === 'PUBLIC') && !isEdit()"
+            (click)="isEdit() && switchPublicity('PUBLIC')"
           >
-            <span>Публичный</span>
+            <span>{{ publicityTranslation['PUBLIC'].toUpperCase() }}</span>
           </div>
         </div>
-        <button type="submit">Подтвердить</button>
-        <button>Отменить</button>
-        <button>Удалить</button>
-        <button>Редактировать</button>
+        <div class="form-label" style="text-align: center">Здесь что-то будет</div>
+        <div class="button-group">
+          @if (!isEdit()) {
+            <button type="button" class="submit-btn edit" (click)="onEdit()">Редактировать</button>
+          } @else {
+            <button type="button" class="submit-btn delete" (click)="isDeleteModalOpen.set(true)">
+              Удалить
+            </button>
+            <button type="submit" class="submit-btn submit">Подтвердить</button>
+            <button type="button" class="submit-btn" (click)="onCancel()">Отменить</button>
+          }
+        </div>
       </div>
     </form>
   } @else {
-    <div>
+    <div class="error-container">
       {{ errorMessage() }}
     </div>
   }
 </div>
+@if (isDeleteModalOpen()) {
+  <div class="modal-overlay" (click)="isDeleteModalOpen.set(false)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Вы уверены?</h3>
+      <h4>Это действие нельзя отменить</h4>
+      <div class="modal-actions">
+        <button class="submit-btn delete" (click)="onDelete()">Удалить</button>
+        <button class="submit-btn" (click)="isDeleteModalOpen.set(false)">Отменить</button>
+      </div>
+    </div>
+  </div>
+}

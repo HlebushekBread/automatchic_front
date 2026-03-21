@@ -1,34 +1,37 @@
 <div class="page-layout">
-  <aside class="filters">
-    <div class="filter-group">
-      <label>Поиск</label>
-      <input
-        type="text"
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event)"
-        placeholder="Введите название..."
-      />
-    </div>
+  <aside>
+    <div class="filters">
+      <div class="filter-group">
+        <label>Поиск</label>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          placeholder="Введите название..."
+        />
+      </div>
 
-    <div class="filter-group">
-      <label>Тип оценивания</label>
-      <select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
-        <option value="all">Все типы</option>
-        @for (type of gradingTypes; track type) {
-          <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
-        }
-      </select>
-    </div>
+      <div class="filter-group">
+        <label>Тип оценивания</label>
+        <select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
+          <option value="all">Все типы</option>
+          @for (type of gradingTypes; track type) {
+            <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
+          }
+        </select>
+      </div>
 
-    <div class="filter-group">
-      <label>Публичность</label>
-      <select [ngModel]="selectedPublicity()" (ngModelChange)="selectedPublicity.set($event)">
-        <option value="all">Все типы</option>
-        @for (publicity of publicities; track publicity) {
-          <option [value]="publicity">{{ publicityTranslation[publicity] }}</option>
-        }
-      </select>
+      <div class="filter-group">
+        <label>Публичность</label>
+        <select [ngModel]="selectedPublicity()" (ngModelChange)="selectedPublicity.set($event)">
+          <option value="all">Все типы</option>
+          @for (publicity of publicities; track publicity) {
+            <option [value]="publicity">{{ publicityTranslation[publicity] }}</option>
+          }
+        </select>
+      </div>
     </div>
+    <div class="filters button" (click)="isCreateModalOpen.set(true)">Создать новую запись</div>
   </aside>
 
   <main class="subjects-grid">
@@ -41,3 +44,30 @@
     }
   </main>
 </div>
+@if (isCreateModalOpen()) {
+  <div class="modal-overlay" (click)="isCreateModalOpen.set(false)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Создать новую запись</h3>
+
+      <div class="filter-group">
+        <label>Название</label>
+        <input
+          type="text"
+          [(ngModel)]="newSubjectTitle"
+          placeholder="Введите название..."
+          (keyup.enter)="onCreate(newSubjectTitle())"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="button"
+          [disabled]="!newSubjectTitle().trim()"
+          (click)="onCreate(newSubjectTitle())"
+        >
+          Создать
+        </button>
+      </div>
+    </div>
+  </div>
+}
