@@ -15,11 +15,9 @@
 }
 
 :host {
-  display: flex;
-  justify-content: center;
+  display: block;
   width: 100%;
-  max-width: 500px;
-  height: fit-content;
+  min-width: 0;
 }
 
 .card {
@@ -43,11 +41,20 @@
     padding-bottom: 16px;
     border-bottom: 2px solid v.$bg-tertiary;
 
+    @media (max-width: 500px) {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+
     .subject-name {
       @extend %truncate;
       margin: 0;
-      width: 65%;
+      max-width: 65%;
       font-size: v.$font-size-base;
+      @media (max-width: 768px) {
+        max-width: 100%;
+        font-size: m.$font-size-base;
+      }
       font-weight: 700;
       color: v.$text-active;
     }
@@ -55,6 +62,10 @@
     .grading-badge {
       max-width: 30%;
       font-size: v.$font-size-small;
+      @media (max-width: 768px) {
+        max-width: 100%;
+        font-size: m.$font-size-small;
+      }
       text-transform: uppercase;
       padding: 4px 8px;
       border-radius: v.$border-radius-secondary;
@@ -70,6 +81,11 @@
     align-items: flex-start;
     margin-bottom: 16px;
 
+    @media (max-width: 500px) {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+
     .left-group {
       width: 60%;
       display: flex;
@@ -78,11 +94,17 @@
 
       .label {
         font-size: v.$font-size-small;
+        @media (max-width: 768px) {
+          font-size: m.$font-size-small;
+        }
         color: v.$text-main;
       }
       .value {
         @extend %truncate;
         font-size: v.$font-size-small;
+        @media (max-width: 768px) {
+          font-size: m.$font-size-small;
+        }
         color: v.$text-active;
         font-weight: 500;
       }
@@ -95,12 +117,19 @@
       flex-direction: column;
       gap: 4px;
 
+      @media (max-width: 500px) {
+        text-align: left;
+      }
+
       .label {
         font-size: v.$font-size-small;
+        @media (max-width: 768px) {
+          font-size: m.$font-size-small;
+        }
         color: v.$text-main;
       }
       .value {
-        font-size: v.$font-size-base;
+        font-size: v.$font-size-small;
         color: v.$text-active;
         font-weight: 500;
       }
@@ -127,6 +156,9 @@
         color: v.$text-active;
         font-weight: 600;
         font-size: v.$font-size-small;
+        @media (max-width: 768px) {
+          font-size: m.$font-size-small;
+        }
       }
 
       .user-details {
@@ -138,8 +170,11 @@
 
         .user-name {
           @extend %truncate;
-          width: 50%;
+          max-width: 50%;
           font-size: v.$font-size-small;
+          @media (max-width: 768px) {
+            font-size: m.$font-size-small;
+          }
           font-weight: 500;
           color: v.$text-active;
         }
@@ -148,8 +183,23 @@
           @extend %truncate;
           width: 40%;
           font-size: v.$font-size-small;
+          @media (max-width: 768px) {
+            font-size: m.$font-size-small;
+          }
           color: v.$text-main;
           text-align: right;
+        }
+
+        @media (max-width: 500px) {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+
+          .user-name,
+          .user-meta {
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: left !important;
+          }
         }
       }
     }

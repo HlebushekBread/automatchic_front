@@ -1,5 +1,8 @@
+<button class="mobile-filter-btn" (click)="showFilters.set(!showFilters())">
+  {{ showFilters() ? 'Закрыть фильтры' : 'Показать фильтры' }}
+</button>
 <div class="page-layout">
-  <aside class="filters">
+  <aside class="filters" [class.is-open]="showFilters()">
     <div class="filter-group">
       <label>Поиск</label>
       <input

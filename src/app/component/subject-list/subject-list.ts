@@ -95,4 +95,6 @@ export class SubjectList {
         },
       });
   }
+
+  showFilters = signal(false);
 }

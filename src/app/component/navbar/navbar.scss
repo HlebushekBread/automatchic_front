@@ -1,7 +1,15 @@
 @use 'variables' as v;
+@use 'mobile' as m;
 
 :host {
   display: block;
+  height: 100%;
+  z-index: 110;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    height: auto;
+  }
 }
 
 .navbar {
@@ -12,12 +20,19 @@
   flex-direction: column;
   gap: 20px;
   align-items: center;
-  position: fixed;
-  left: 0;
-  top: 0;
 
   @media (max-width: 768px) {
-    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100%;
+    height: m.$navbar-height;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0;
+    border-top: 2px solid v.$bg-tertiary;
+    z-index: 1000;
   }
 
   .logo-container {
@@ -26,6 +41,10 @@
     display: flex;
     justify-content: center;
     transition: v.$transition;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
 
     .logo {
       width: v.$logo-size;
@@ -41,9 +60,16 @@
   .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
     align-items: center;
+
+    @media (max-width: 768px) {
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 0;
+      height: 100%;
+    }
 
     .nav-item {
       width: v.$item-size;
@@ -57,6 +83,12 @@
       text-decoration: none;
       border-radius: v.$border-radius-main;
       transition: v.$transition;
+
+      @media (max-width: 768px) {
+        flex: 1;
+        height: 100%;
+        border-radius: 0;
+      }
 
       &:hover,
       &.active {
@@ -72,6 +104,7 @@
       .icon {
         width: v.$icon-size;
         height: v.$icon-size;
+
         background-color: v.$text-main;
 
         -webkit-mask-repeat: no-repeat;

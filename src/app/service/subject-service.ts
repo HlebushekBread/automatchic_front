@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from './user-service';
+import { Task } from './task-service';
 
 export const GradingTypeTranslation: Record<string, string> = {
   CREDIT: 'Зачет',
@@ -39,22 +40,6 @@ export interface Subject {
   links: Link[];
 }
 
-export interface Task {
-  id: number;
-  name: string;
-  type: string;
-  dueDate: Date;
-  maxGrade: number;
-  receivedGrade: number;
-  gradeWeight: number;
-}
-
-export interface Link {
-  id: number;
-  name: string;
-  fullLink: string;
-}
-
 export interface SubjectDto {
   id: number;
   name: string;
@@ -68,6 +53,12 @@ export interface SubjectDto {
   gradingMin: number;
   targetGrade: number;
   publicity: string;
+}
+
+export interface Link {
+  id: number;
+  name: string;
+  fullLink: string;
 }
 
 @Injectable({

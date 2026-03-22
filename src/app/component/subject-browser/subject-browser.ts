@@ -55,4 +55,6 @@ export class SubjectBrowser {
       return matchesSearch && matchesType;
     });
   });
+
+  showFilters = signal(false);
 }

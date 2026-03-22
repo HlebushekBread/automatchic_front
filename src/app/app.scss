@@ -1,7 +1,10 @@
 @use 'variables' as v;
+@use 'mobile' as m;
 
 .app-container {
   display: flex;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 
@@ -9,18 +12,16 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  margin-left: v.$navbar-width;
+  min-width: 0;
 
   @media (max-width: 768px) {
-    margin-left: 0;
+    padding-bottom: m.$navbar-height;
   }
 }
 
 .page-body {
   flex: 1;
-  padding-top: v.$header-height;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  justify-content: center;
 }

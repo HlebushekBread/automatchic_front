@@ -1,6 +1,14 @@
+<div class="top-panel">
+  <button class="mobile-filter-btn" (click)="showFilters.set(!showFilters())">
+    {{ showFilters() ? 'Закрыть фильтры' : 'Показать фильтры' }}
+  </button>
+  <button class="mobile-filter-btn" (click)="isCreateModalOpen.set(true)">
+    Создать новую запись
+  </button>
+</div>
 <div class="page-layout">
   <aside>
-    <div class="filters">
+    <div class="filters" [class.is-open]="showFilters()">
       <div class="filter-group">
         <label>Поиск</label>
         <input
