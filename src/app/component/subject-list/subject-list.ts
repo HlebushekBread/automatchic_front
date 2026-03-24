@@ -1,4 +1,4 @@
-import { Component, Input, Signal, computed, inject, signal } from '@angular/core';
+import { Component, Input, computed, inject, signal } from '@angular/core';
 import {
   GradingTypeTranslation,
   PublicityTranslation,
@@ -48,7 +48,7 @@ export class SubjectList {
   selectedType = signal('all');
   selectedPublicity = signal('all');
 
-  showFilters = signal(false);
+  isShowFilters = signal(false);
   isCreateModalOpen = signal(false);
   newSubjectTitle = signal('');
 
@@ -62,7 +62,7 @@ export class SubjectList {
       .toUpperCase();
   }
 
-  normalize = (text: string) => text.toLowerCase().replace(/[\.\s\-]/g, '');
+  normalize = (text: string) => text.toLowerCase().replace(/[.\s-]/g, '');
 
   filteredSubjects = computed(() => {
     const query = this.normalize(this.searchQuery());

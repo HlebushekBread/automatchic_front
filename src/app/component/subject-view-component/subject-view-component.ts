@@ -1,11 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, signal, untracked } from '@angular/core';
 import {
+  GradeInfo,
   GradingTypeTranslation,
   PublicityTranslation,
   Subject,
   SubjectDto,
   SubjectService,
-  TaskTypeTranslation,
 } from '../../service/subject-service';
 import { CommonModule } from '@angular/common';
 import {
@@ -19,41 +19,38 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap } from 'rxjs';
-import { AuthService } from '../../service/auth-service';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Task, TaskService, TaskTypeTranslation } from '../../service/task-service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-subject-view-component',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DragDropModule],
   templateUrl: './subject-view-component.html',
   styleUrl: './subject-view-component.scss',
 })
 export class SubjectViewComponent {
-  private authService = inject(AuthService);
+  protected readonly Math = Math;
+
+  private taskService = inject(TaskService);
   private subjectService = inject(SubjectService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
+  private changeDetector = inject(ChangeDetectorRef);
 
   readonly gradingTypeTranslation = GradingTypeTranslation;
   gradingTypes = Object.keys(this.gradingTypeTranslation);
 
-  readonly taskTypeTranslation = TaskTypeTranslation;
-  taskTypes = Object.keys(this.taskTypeTranslation);
-
   readonly publicityTranslation = PublicityTranslation;
   publicities = Object.keys(this.publicityTranslation);
 
-  readonly gradeInfo: Record<number, { translation: string; color: string; text: string }> = {
-    6: { translation: 'max', color: 'var(--grade-max)', text: 'var(--text-light)' },
-    5: { translation: '5', color: 'var(--grade-5)', text: 'var(--text-dark)' },
-    4: { translation: '4', color: 'var(--grade-4)', text: 'var(--text-light)' },
-    3: { translation: '3', color: 'var(--grade-3)', text: 'var(--text-dark)' },
-    2: { translation: 'min', color: 'var(--grade-min)', text: 'var(--text-light)' },
-    1: { translation: '-', color: 'var(--grade-less)', text: 'var(--text-light)' },
-    0: { translation: '-', color: 'var(--grade-less)', text: 'var(--text-light)' },
-  };
+  readonly taskTypeTranslation = TaskTypeTranslation;
+  taskTypes = Object.keys(this.taskTypeTranslation);
+
+  readonly gradeInfo = GradeInfo;
 
   readonly gradeFields = [
     { control: 'gradingMax', grade: 4 },
@@ -64,6 +61,23 @@ export class SubjectViewComponent {
   ];
 
   errorMessage = signal('');
+
+  subjectForm!: FormGroup;
+  tasks = signal<Task[]>([]);
+  savedSubject = signal<SubjectDto>({
+    id: 0,
+    name: '',
+    teacher: '',
+    description: '',
+    gradingType: '',
+    gradingMax: 0,
+    grading5: 0,
+    grading4: 0,
+    grading3: 0,
+    gradingMin: 0,
+    targetGrade: 0,
+    publicity: '',
+  });
 
   ngOnInit() {
     this.subjectForm.disable();
@@ -78,18 +92,23 @@ export class SubjectViewComponent {
         next: (subject) => {
           if (!subject) {
             this.errorMessage.set('Ошибка получения.');
-          } else {
-            this.errorMessage.set('');
-            this.patchSubjectForm(subject);
-            this.adjustFields();
+            return;
           }
+          this.errorMessage.set('');
+          this.patchSubjectForm(subject);
+          this.adjustFields();
+          this.savedSubject.set(this.subjectForm.getRawValue());
+          this.tasks.set(subject.tasks);
+          this.taskForms.clear();
+          subject.tasks.forEach((task) => {
+            this.taskForms.push(this.createTaskForm(task));
+          });
+          this.updateCurrentScore();
         },
         error: (err: HttpErrorResponse) =>
           this.errorMessage.set(err.error?.message || 'Ошибка доступа'),
       });
   }
-
-  subjectForm!: FormGroup;
 
   constructor() {
     this.subjectForm = this.formBuilder.group(
@@ -113,10 +132,17 @@ export class SubjectViewComponent {
     );
   }
 
+  readonly errorMapping: Record<number, string> = {
+    4: 'max_lt_5',
+    3: '5_lt_4',
+    2: '4_lt_3',
+    1: '3_lt_min',
+    0: 'min_lt_0',
+  };
+
   private gradingValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
     const v = group.value;
     const checks = [
-      { upper: v.gradingMax, lower: v.grading5, key: '200_lt_max' },
       { upper: v.gradingMax, lower: v.grading5, key: 'max_lt_5' },
       { upper: v.grading5, lower: v.grading4, key: '5_lt_4' },
       { upper: v.grading4, lower: v.grading3, key: '4_lt_3' },
@@ -154,52 +180,48 @@ export class SubjectViewComponent {
     });
   }
 
-  getCurrentSubject(): SubjectDto {
-    return this.subjectForm.getRawValue();
-  }
+  onCopyLink() {
+    const url = window.location.href;
 
-  preveousSubject = signal({
-    id: 0,
-    name: '',
-    teacher: '',
-    description: '',
-    gradingType: '',
-    gradingMax: 0,
-    grading5: 0,
-    grading4: 0,
-    grading3: 0,
-    gradingMin: 0,
-    targetGrade: 0,
-    publicity: '',
-  });
+    navigator.clipboard
+      .writeText(url.replace('view', 'browse'))
+      .then(() => {
+        console.log('Ссылка скопирована!');
+      })
+      .catch((err) => {
+        console.error('Ошибка копирования:', err);
+      });
+  }
 
   isEdit = signal(false);
 
   onEdit() {
     this.isEdit.set(true);
     this.subjectForm.enable();
-    this.preveousSubject.set(this.getCurrentSubject());
   }
 
   onSubmit() {
     this.adjustFields();
     if (this.subjectForm.invalid) {
-      console.log(this.subjectForm.errors);
       this.subjectForm.markAllAsTouched();
       return;
     }
+
+    const formValue = this.subjectForm.getRawValue();
     this.isEdit.set(false);
-    this.patchSubjectForm(this.getCurrentSubject());
     this.subjectForm.disable();
-    this.subjectService.saveSubject(this.getCurrentSubject()).subscribe({
-      next: () => {},
-      error: () => {},
+
+    this.subjectService.saveSubject(formValue).subscribe({
+      next: () => {
+        this.savedSubject.set(formValue);
+        this.patchSubjectForm(formValue);
+      },
     });
   }
 
   onCancel() {
     this.isEdit.set(false);
-    this.patchSubjectForm(this.preveousSubject());
+    this.patchSubjectForm(this.savedSubject());
     this.adjustFields();
     this.subjectForm.disable();
   }
@@ -209,7 +231,7 @@ export class SubjectViewComponent {
   onDelete() {
     this.isEdit.set(false);
     this.subjectForm.disable();
-    this.subjectService.deleteSubject(this.getCurrentSubject().id).subscribe({
+    this.subjectService.deleteSubject(this.subjectForm.getRawValue().id).subscribe({
       next: () => {
         this.isDeleteModalOpen.set(false);
         this.router.navigate(['/subjects/view']);
@@ -230,13 +252,13 @@ export class SubjectViewComponent {
 
     this.isGradingTypeCredit.set(isCredit);
 
-    let gradingMax = Math.max(0, Number(rawValues.gradingMax || 0));
-    let grading5 = Math.max(0, Number(rawValues.grading5 || 0));
-    let grading4 = Math.max(0, Number(rawValues.grading4 || 0));
-    let grading3 = Math.max(0, Number(rawValues.grading3 || 0));
-    let gradingMin = Math.max(0, Number(rawValues.gradingMin || 0));
+    const gradingMax = Math.max(0, Number(rawValues.gradingMax || 0));
+    const grading5 = Math.max(0, Number(rawValues.grading5 || 0));
+    const grading4 = Math.max(0, Number(rawValues.grading4 || 0));
+    const grading3 = Math.max(0, Number(rawValues.grading3 || 0));
+    const gradingMin = Math.max(0, Number(rawValues.gradingMin || 0));
 
-    const updates: any = {
+    const updates = {
       gradingMax: gradingMax,
       grading5: grading5,
       grading4: grading4,
@@ -246,12 +268,229 @@ export class SubjectViewComponent {
 
     if (isCredit) {
       if (rawValues.targetGrade === 1 || rawValues.targetGrade === 2) {
-        updates.targetGrade = 3;
+        this.subjectForm.patchValue({ targetGrade: 3 });
       }
       updates.grading4 = updates.grading5;
       updates.grading3 = updates.grading5;
     }
 
-    this.subjectForm.patchValue(updates, { emitEvent: false });
+    this.subjectForm.patchValue(updates);
+  }
+
+  // -------------------------------------------------------------- //
+
+  private createTaskForm(task?: Task): FormGroup {
+    const now = new Date();
+    const subjectId = untracked(() => this.savedSubject()?.id);
+    const group = this.formBuilder.group({
+      id: [task?.id || 0, [Validators.required]],
+      name: [task?.name || 'Название', [Validators.required]],
+      dueDate: [task?.dueDate || now.toISOString().split('T')[0] + 'T00:00', [Validators.required]],
+      receivedGrade: [task?.receivedGrade || 0, [Validators.required, Validators.min(0)]],
+      maxGrade: [task?.maxGrade || 0, [Validators.required, Validators.min(0)]],
+      gradeWeight: [task?.gradeWeight || 1, [Validators.required, Validators.min(0)]],
+      type: [task?.type || 'HOMEWORK', [Validators.required]],
+      position: [task?.position || this.taskForms.length, [Validators.required]],
+      subjectId: [subjectId, [Validators.required]],
+    });
+
+    group.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      )
+      .subscribe(() => {
+        const index = this.taskForms.controls.indexOf(group);
+        if (index !== -1 && group.valid) {
+          this.onSaveTask(index);
+        }
+      });
+
+    return group;
+  }
+
+  drop(event: CdkDragDrop<any>) {
+    moveItemInArray(this.taskForms.controls, event.previousIndex, event.currentIndex);
+
+    this.updateTasksPositions();
+
+    const positionUpdates = this.taskForms.controls.map((control, index) => {
+      const group = control as FormGroup;
+      group.patchValue({ position: index }, { emitEvent: false });
+
+      return {
+        id: group.getRawValue().id,
+        position: index,
+      };
+    });
+
+    console.log(positionUpdates);
+
+    this.taskService.updateTaskPositions(positionUpdates).subscribe({
+      next: () => {},
+      error: () => {
+        moveItemInArray(this.taskForms.controls, event.currentIndex, event.previousIndex);
+      },
+    });
+  }
+
+  taskGroup = this.formBuilder.group({
+    taskForms: this.formBuilder.array<FormGroup>([]),
+  });
+
+  get taskForms() {
+    return this.taskGroup.controls.taskForms;
+  }
+
+  updateTasksPositions() {
+    this.taskForms.controls.forEach((control, index) => {
+      control.patchValue({ position: index }, { emitEvent: false });
+    });
+  }
+
+  currentScore = signal(0);
+
+  private updateCurrentScore() {
+    const total = this.taskForms.controls.reduce((sum, control) => {
+      const raw = control.getRawValue();
+      return sum + (Number(raw.receivedGrade) || 0) * (Number(raw.gradeWeight) || 1);
+    }, 0);
+    this.currentScore.set(total);
+  }
+
+  getMaxGradeSum(): number {
+    return this.taskForms.controls.reduce((sum, control) => {
+      const raw = control.getRawValue();
+      return sum + (Number(raw.maxGrade) || 0) * (Number(raw.gradeWeight) || 1);
+    }, 0);
+  }
+
+  recalculate() {
+    const maxGrade = this.getMaxGradeSum();
+    this.subjectForm.patchValue({ gradingMax: maxGrade });
+    const raw = this.subjectForm.getRawValue();
+    if (raw.grading5 > raw.gradingMax) {
+      this.subjectForm.patchValue({ grading5: maxGrade });
+    }
+    if (raw.grading4 > raw.gradingMax) {
+      this.subjectForm.patchValue({ grading4: maxGrade });
+    }
+    if (raw.grading3 > raw.gradingMax) {
+      this.subjectForm.patchValue({ grading3: maxGrade });
+    }
+    if (raw.gradingMin > raw.gradingMax) {
+      this.subjectForm.patchValue({ gradingMin: maxGrade });
+    }
+    if (this.subjectForm.invalid) {
+      this.subjectForm.markAllAsTouched();
+      return;
+    }
+
+    this.adjustFields();
+    if (this.subjectForm.invalid) {
+      this.subjectForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.subjectForm.getRawValue();
+    this.subjectService.saveSubject(formValue).subscribe({
+      next: () => {
+        this.savedSubject.set({
+          ...this.savedSubject(),
+          gradingMax: formValue.gradingMax,
+          grading5: formValue.grading5,
+          grading4: formValue.grading4,
+          grading3: formValue.grading3,
+          gradingMin: formValue.gradingMin,
+        });
+        this.patchSubjectForm(formValue);
+      },
+    });
+  }
+
+  currentGrade = computed(() => {
+    const savedV = this.savedSubject();
+    if (!savedV) return 0;
+
+    const score = this.currentScore();
+    if (score >= savedV.gradingMax) return 6;
+    if (score >= savedV.grading5) return 5;
+    if (score >= savedV.grading4) return 4;
+    if (score >= savedV.grading3) return 3;
+    if (score >= savedV.gradingMin) return 2;
+    return 1;
+  });
+
+  missingScore = computed(() => {
+    const v = this.savedSubject();
+    if (!v) return 0;
+
+    const gradings = [
+      Number(v.gradingMin) || 0,
+      Number(v.grading3) || 0,
+      Number(v.grading4) || 0,
+      Number(v.grading5) || 0,
+      Number(v.gradingMax) || 0,
+    ];
+
+    const targetValue = gradings[v.targetGrade] || 0;
+    return Math.max(0, targetValue - this.currentScore());
+  });
+
+  onAddTask() {
+    if (this.taskForms.length >= 20) {
+      console.log('Максимум 20 задач на предмет');
+      return;
+    }
+
+    const newGroup = this.createTaskForm();
+    newGroup.patchValue({ position: this.taskForms.length });
+
+    console.log(newGroup.getRawValue());
+
+    this.taskService.saveTask(newGroup.getRawValue()).subscribe({
+      next: (response) => {
+        newGroup.patchValue({ id: response.id });
+        this.taskForms.push(newGroup);
+        this.updateTasksPositions();
+        this.changeDetector.markForCheck();
+      },
+      error: (err) => {
+        console.error('Не удалось добавить задачу:', err);
+      },
+    });
+  }
+
+  onSaveTask(index: number) {
+    const group = this.taskForms.at(index);
+    if (this.taskForms.at(index).invalid) {
+      this.taskForms.at(index).markAllAsTouched();
+      return;
+    }
+    const taskData = group.getRawValue();
+    console.log(taskData);
+    this.taskService.saveTask(taskData).subscribe({
+      next: () => {
+        this.updateCurrentScore();
+      },
+    });
+  }
+
+  onDeleteTask(index: number) {
+    const group = this.taskForms.at(index);
+    const id = group.getRawValue().id;
+
+    console.log('Удаление:', id);
+
+    if (id) {
+      this.taskService.deleteTask(id).subscribe({
+        next: () => {
+          this.taskForms.removeAt(index);
+          this.updateCurrentScore();
+          this.updateTasksPositions();
+          this.changeDetector.markForCheck();
+        },
+      });
+    }
   }
 }

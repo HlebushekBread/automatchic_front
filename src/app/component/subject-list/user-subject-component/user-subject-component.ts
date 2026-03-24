@@ -1,12 +1,13 @@
 import { Component, computed, inject, input } from '@angular/core';
 import {
+  GradeInfo,
   GradingTypeTranslation,
   PublicityTranslation,
   Subject,
-  TaskTypeTranslation,
 } from '../../../service/subject-service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { TaskTypeTranslation } from '../../../service/task-service';
 
 @Component({
   selector: 'app-user-subject-component',
@@ -21,6 +22,8 @@ export class UserSubjectComponent {
   readonly taskTypeTranslation = TaskTypeTranslation;
   readonly publicityTranslation = PublicityTranslation;
 
+  readonly gradeInfo = GradeInfo;
+
   subject = input.required<Subject>();
 
   upcomingTasks = computed(() => {
@@ -33,9 +36,10 @@ export class UserSubjectComponent {
   });
 
   getCurrentScore(): number {
-    return this.subject().tasks.reduce((sum, task) => {
-      return sum + (task.receivedGrade || 0);
-    }, 0);
+    return this.subject().tasks.reduce(
+      (sum, task) => sum + (Number(task.receivedGrade) || 0) * (Number(task.gradeWeight) || 1),
+      0,
+    );
   }
 
   getMissingScore(): number {
@@ -62,14 +66,4 @@ export class UserSubjectComponent {
     if (score >= 0) return 1;
     return 0;
   }
-
-  readonly gradeInfo: Record<number, { translation: string; color: string; text: string }> = {
-    6: { translation: '+', color: 'var(--grade-max)', text: 'var(--text-light)' },
-    5: { translation: '5', color: 'var(--grade-5)', text: 'var(--text-dark)' },
-    4: { translation: '4', color: 'var(--grade-4)', text: 'var(--text-light)' },
-    3: { translation: '3', color: 'var(--grade-3)', text: 'var(--text-dark)' },
-    2: { translation: '2', color: 'var(--grade-min)', text: 'var(--text-light)' },
-    1: { translation: '-', color: 'var(--grade-less)', text: 'var(--text-light)' },
-    0: { translation: '-', color: 'var(--grade-less)', text: 'var(--text-light)' },
-  };
 }

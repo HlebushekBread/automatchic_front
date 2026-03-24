@@ -21,7 +21,6 @@
   flex: 1;
   min-height: 0;
   display: flex;
-  gap: 10px;
   height: 100%;
   padding: 0 20px;
   box-sizing: border-box;
@@ -154,14 +153,6 @@
     padding: 20px;
     box-sizing: border-box;
   }
-
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: v.$bg-tertiary;
-    border-radius: 10px;
-  }
 }
 
 .modal-overlay {
@@ -202,6 +193,10 @@
     color: v.$text-active;
     font-weight: 600;
     text-align: center;
+
+    &.alert {
+      color: v.$status-red-text;
+    }
   }
 
   .filter-group {
@@ -286,8 +281,8 @@
 .mobile-filter-btn {
   display: none;
   width: calc(100% - 40px);
-  margin: 10px 20px;
-  padding: 12px;
+  margin: 10px;
+  padding: 10px;
   background: v.$bg-secondary;
   border: 2px solid v.$bg-tertiary;
   border-radius: v.$border-radius-main;

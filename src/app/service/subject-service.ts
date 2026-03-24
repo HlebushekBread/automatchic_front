@@ -11,15 +11,70 @@ export const GradingTypeTranslation: Record<string, string> = {
   EXAM: 'Экзамен',
 };
 
-export const TaskTypeTranslation: Record<string, string> = {
-  HOMEWORK: 'Домашняя работа',
-  LABWORK: 'Лабораторная работа',
-  TEST: 'Тест',
-};
-
 export const PublicityTranslation: Record<string, string> = {
   PRIVATE: 'Приватный',
   PUBLIC: 'Публичный',
+};
+
+export const GradeInfo: Record<
+  number,
+  {
+    translation: string;
+    compactTranslation: string;
+    thresholdTranslation: string;
+    color: string;
+    text: string;
+  }
+> = {
+  6: {
+    translation: 'Максимум',
+    compactTranslation: '+',
+    thresholdTranslation: 'max',
+    color: 'var(--grade-max)',
+    text: 'var(--text-light)',
+  },
+  5: {
+    translation: '5',
+    compactTranslation: '5',
+    thresholdTranslation: '5',
+    color: 'var(--grade-5)',
+    text: 'var(--text-dark)',
+  },
+  4: {
+    translation: '4',
+    compactTranslation: '4',
+    thresholdTranslation: '4',
+    color: 'var(--grade-4)',
+    text: 'var(--text-light)',
+  },
+  3: {
+    translation: '3',
+    compactTranslation: '3',
+    thresholdTranslation: '3',
+    color: 'var(--grade-3)',
+    text: 'var(--text-dark)',
+  },
+  2: {
+    translation: 'Порог',
+    compactTranslation: '2',
+    thresholdTranslation: 'min',
+    color: 'var(--grade-min)',
+    text: 'var(--text-light)',
+  },
+  1: {
+    translation: 'Меньше порога',
+    compactTranslation: '-',
+    thresholdTranslation: '-',
+    color: 'var(--grade-less)',
+    text: 'var(--text-light)',
+  },
+  0: {
+    translation: '-',
+    compactTranslation: '-',
+    thresholdTranslation: '-',
+    color: 'var(--grade-less)',
+    text: 'var(--text-light)',
+  },
 };
 
 export interface Subject {

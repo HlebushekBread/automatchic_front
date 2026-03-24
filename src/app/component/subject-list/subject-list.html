@@ -1,6 +1,6 @@
 <div class="top-panel">
-  <button class="mobile-filter-btn" (click)="showFilters.set(!showFilters())">
-    {{ showFilters() ? 'Закрыть фильтры' : 'Показать фильтры' }}
+  <button class="mobile-filter-btn" (click)="isShowFilters.set(!isShowFilters())">
+    {{ isShowFilters() ? 'Закрыть фильтры' : 'Показать фильтры' }}
   </button>
 
   @if (mode() == 'view') {
@@ -11,8 +11,8 @@
 </div>
 
 <div class="page-layout">
-  <aside>
-    <div class="filters" [class.is-open]="showFilters()">
+  <aside [style.margin-bottom]="isShowFilters() ? '10px' : 0">
+    <div class="filters" [class.is-open]="isShowFilters()">
       <div class="filter-group">
         <label>Поиск</label>
         <input
@@ -67,24 +67,28 @@
   <div class="modal-overlay" (click)="isCreateModalOpen.set(false)">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <h3>Создать новую запись</h3>
-      <div class="filter-group">
-        <label>Название</label>
-        <input
-          type="text"
-          [(ngModel)]="newSubjectTitle"
-          placeholder="Введите название..."
-          (keyup.enter)="onCreate(newSubjectTitle())"
-        />
-      </div>
-      <div class="modal-actions">
-        <button
-          class="button"
-          [disabled]="!newSubjectTitle().trim()"
-          (click)="onCreate(newSubjectTitle())"
-        >
-          Создать
-        </button>
-      </div>
+      @if (subjectList().length < 10) {
+        <div class="filter-group">
+          <label>Название</label>
+          <input
+            type="text"
+            [(ngModel)]="newSubjectTitle"
+            placeholder="Введите название..."
+            (keyup.enter)="onCreate(newSubjectTitle())"
+          />
+        </div>
+        <div class="modal-actions">
+          <button
+            class="button"
+            [disabled]="!newSubjectTitle().trim()"
+            (click)="onCreate(newSubjectTitle())"
+          >
+            Создать
+          </button>
+        </div>
+      } @else {
+        <h3 class="alert">Максимум 10 дисциплин</h3>
+      }
     </div>
   </div>
 }

@@ -46,7 +46,7 @@
         <div class="goal-text">
           Цель:
           <span [style.color]="gradeInfo[subject().targetGrade + 2].color">{{
-            subject().targetGrade + 2
+            gradeInfo[subject().targetGrade + 2].translation
           }}</span>
           -
           @if (getMissingScore() > 0) {
@@ -59,11 +59,11 @@
 
       <div
         class="grade-badge"
-        [class.smaller]="gradeInfo[getCurrentGrade()].translation.length > 2"
+        [class.smaller]="gradeInfo[getCurrentGrade()].compactTranslation.length > 2"
         [style.background-color]="gradeInfo[getCurrentGrade()].color"
         [style.color]="gradeInfo[getCurrentGrade()].text"
       >
-        {{ gradeInfo[getCurrentGrade()].translation }}
+        {{ gradeInfo[getCurrentGrade()].compactTranslation }}
       </div>
     </div>
 

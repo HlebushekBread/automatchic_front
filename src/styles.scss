@@ -1,4 +1,5 @@
 @use 'variables' as v;
+@use 'mobile' as m;
 
 body {
   background-color: v.$bg-main;
@@ -12,6 +13,26 @@ input,
 select,
 textarea {
   font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: v.$bg-tertiary;
+  border-radius: 10px;
+}
+
+.error-container {
+  padding: 10px;
+  color: v.$status-red-text;
+  background-color: v.$status-red-bg;
+  border: 2px solid v.$status-red-border;
+  border-radius: v.$border-radius-main;
+  font-size: v.$font-size-base;
+  @media (max-width: 768px) {
+    font-size: m.$font-size-base;
+  }
 }
 
 .grade-badge {

@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 40px 20px;
+  margin: 0 20px;
 
   --grade-max: #{v.$grade-max};
   --grade-5: #{v.$grade-5};
@@ -21,7 +21,12 @@
 .view-card {
   display: flex;
   flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
   max-width: 1200px;
+  gap: 20px;
+  max-height: calc(100vh - v.$header-height);
+  overflow-y: auto;
 }
 
 .subject-form {
@@ -34,7 +39,6 @@
   border-radius: v.$border-radius-main;
   box-shadow: v.$shadow-main;
   width: fit-content;
-  margin-bottom: 100px;
 
   .form-label {
     color: v.$text-main;
@@ -83,6 +87,12 @@
       display: none;
     }
 
+    .hidden-radio:not(:checked):not(:disabled) + .grade-badge {
+      &:hover {
+        background-color: rgb(from var(--grade-color) r g b / 0.5) !important;
+      }
+    }
+
     .hidden-radio:checked + .grade-badge {
       background-color: var(--grade-color) !important;
       color: var(--grade-text) !important;
@@ -101,6 +111,15 @@
     font-size: v.$font-size-base;
     transition: v.$transition;
     appearance: none;
+
+    &.ng-invalid.ng-touched {
+      color: v.$status-red-text;
+      border-color: v.$status-red-border;
+    }
+
+    &.ng-invalid.ng-touched:focus {
+      border-color: brown;
+    }
 
     &:disabled {
       background-color: transparent;
@@ -126,14 +145,6 @@
       word-break: break-word;
       padding-top: 15px;
       resize: none;
-
-      &::-webkit-scrollbar {
-        width: 10px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: v.$bg-tertiary;
-        border-radius: 10px;
-      }
     }
 
     &.grading {
@@ -159,7 +170,7 @@
   .submit-btn {
     height: v.$control-height;
     padding: 0 20px;
-    background-color: v.$bg-secondary;
+    background-color: v.$bg-main;
     color: v.$text-main;
     border: 2px solid v.$bg-tertiary;
     border-color: v.$bg-tertiary;
@@ -178,7 +189,6 @@
       background-color: v.$status-yellow-bg;
       border-color: v.$status-yellow-border;
       &:hover {
-        background-color: v.$status-yellow-bg;
         border-color: darkgoldenrod;
       }
     }
@@ -188,7 +198,6 @@
       background-color: v.$status-green-bg;
       border-color: v.$status-green-border;
       &:hover {
-        background-color: v.$status-green-bg;
         border-color: green;
       }
     }
@@ -198,7 +207,6 @@
       background-color: v.$status-red-bg;
       border-color: v.$status-red-border;
       &:hover {
-        background-color: v.$status-red-bg;
         border-color: brown;
       }
     }
@@ -374,4 +382,313 @@ input[type='number'] {
       }
     }
   }
+}
+
+.task-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: v.$bg-secondary;
+  border-radius: v.$border-radius-main;
+  box-shadow: v.$shadow-main;
+  width: 100%;
+
+  .grading-info {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+
+    .grading-summary {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      .score-summary {
+        text-align: left;
+
+        .current-score {
+          font-size: v.$font-size-base;
+          @media (max-width: 768px) {
+            font-size: m.$font-size-base;
+          }
+          font-weight: 700;
+          color: v.$text-active;
+          span {
+            color: v.$text-main;
+            font-weight: 400;
+          }
+        }
+
+        .goal-text {
+          font-size: v.$font-size-small;
+          @media (max-width: 768px) {
+            font-size: m.$font-size-small;
+          }
+          color: v.$text-main;
+          margin-top: 4px;
+        }
+      }
+    }
+
+    .recalculate-button {
+      flex: 1fr;
+      height: v.$control-height;
+      padding: 0 20px;
+      background-color: v.$bg-main;
+      color: v.$text-main;
+      border: 2px solid v.$bg-tertiary;
+      border-color: v.$bg-tertiary;
+      border-radius: v.$border-radius-secondary;
+      font-size: v.$font-size-small;
+      font-weight: 600;
+      cursor: pointer;
+      transition: v.$transition;
+
+      &:hover:not(:disabled) {
+        border-color: v.$text-main;
+      }
+    }
+
+    .active-text {
+      color: v.$text-active;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 6px;
+      background: v.$bg-tertiary;
+      border-radius: 3px;
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .segment {
+        height: 100%;
+
+        &:first-child {
+          border-top-left-radius: 3px;
+          border-bottom-left-radius: 3px;
+        }
+        &:last-child {
+          border-top-right-radius: 3px;
+          border-bottom-right-radius: 3px;
+        }
+      }
+      .seg-less {
+        background: v.$grade-less;
+      }
+      .seg-min {
+        background: v.$grade-min;
+      }
+      .seg-3 {
+        background: v.$grade-3;
+      }
+      .seg-4 {
+        background: v.$grade-4;
+      }
+      .seg-5 {
+        background: v.$grade-5;
+      }
+
+      .cursor {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+
+        left: 72%;
+        width: 4px;
+        height: 14px;
+        background: v.$text-active;
+        border-radius: 2px;
+        border: 1px solid v.$bg-secondary;
+      }
+    }
+  }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.task-container {
+  border-top: 1px solid v.$bg-tertiary;
+  border-radius: v.$border-radius-main;
+  padding: 10px 0;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  .task-row {
+    display: grid;
+    grid-template-columns: 25px 220px 200px 200px 60px 60px 60px max-content max-content;
+    padding: 0 15px;
+    gap: 10px;
+    align-items: center;
+
+    .drag-handle {
+      cursor: grab;
+      color: v.$text-main;
+      text-align: center;
+      font-size: 20px;
+      user-select: none;
+      transition: v.$transition;
+
+      &:active {
+        color: v.$text-active;
+        cursor: grabbing;
+      }
+    }
+
+    .table-label {
+      color: v.$text-main;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-left: 2px solid v.$bg-tertiary;
+      border-right: 2px solid v.$bg-tertiary;
+    }
+
+    .form-input,
+    select {
+      width: 100%;
+      height: calc(v.$control-height * 0.8);
+      background-color: v.$bg-main;
+      border: 2px solid v.$bg-tertiary;
+      border-radius: v.$border-radius-secondary;
+      color: v.$text-main;
+      padding: 0 8px;
+      box-sizing: border-box;
+      font-size: v.$font-size-small;
+      transition: v.$transition;
+      appearance: none;
+
+      &:focus {
+        outline: none;
+        border-color: v.$text-main;
+      }
+
+      &.ng-invalid.ng-touched {
+        color: v.$status-red-text;
+        border-color: v.$status-red-border;
+      }
+
+      &.ng-invalid.ng-touched:focus {
+        border-color: brown;
+      }
+    }
+
+    .form-button {
+      width: 100%;
+      height: calc(v.$control-height * 0.8);
+      background-color: v.$bg-main;
+      border: 2px solid v.$bg-tertiary;
+      border-radius: v.$border-radius-secondary;
+      color: v.$text-main;
+      padding: 0 8px;
+      box-sizing: border-box;
+      font-size: v.$font-size-small;
+      transition: v.$transition;
+
+      &:hover {
+        outline: none;
+        border-color: v.$text-main;
+      }
+
+      &.edit {
+        color: v.$status-yellow-text;
+        background-color: v.$status-yellow-bg;
+        border-color: v.$status-yellow-border;
+        &:hover {
+          border-color: darkgoldenrod;
+        }
+      }
+
+      &.submit {
+        color: v.$status-green-text;
+        background-color: v.$status-green-bg;
+        border-color: v.$status-green-border;
+        &:hover {
+          border-color: green;
+        }
+      }
+
+      &.delete {
+        color: v.$status-red-text;
+        background-color: v.$status-red-bg;
+        border-color: v.$status-red-border;
+        &:hover {
+          border-color: brown;
+        }
+      }
+    }
+  }
+}
+
+.task-add-button {
+  width: 100%;
+  height: v.$control-height;
+  background-color: v.$bg-main;
+  border: 2px solid v.$bg-tertiary;
+  border-radius: v.$border-radius-secondary;
+  color: v.$text-main;
+  padding: auto;
+  box-sizing: border-box;
+  font-size: v.$font-size-small;
+  transition: v.$transition;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover:not(:disabled) {
+    outline: none;
+    border-color: v.$text-main;
+  }
+
+  &:disabled {
+    color: v.$status-red-text;
+    background-color: v.$bg-secondary;
+  }
+}
+
+.task-container.cdk-drag-preview {
+  .drag-handle {
+    color: v.$text-active;
+  }
+
+  box-shadow: v.$shadow-main;
+
+  background: v.$bg-secondary;
+  display: flex;
+  align-items: center;
+  border-radius: v.$border-radius-main;
+  opacity: 0.8;
+}
+
+.task-list.cdk-drop-list-dragging .task-container:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drag-placeholder {
+  box-sizing: border-box;
+  background: v.$bg-tertiary;
+  border: 2px dashed v.$text-main;
+  border-radius: v.$border-radius-main;
+  min-height: calc(v.$control-height * 0.8) + 20px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

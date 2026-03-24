@@ -64,16 +64,19 @@
     .grading-badge {
       max-width: 30%;
       font-size: v.$font-size-small;
-      @media (max-width: 768px) {
-        max-width: 100%;
-        font-size: m.$font-size-small;
-      }
       text-transform: uppercase;
       padding: 4px 8px;
       border-radius: v.$border-radius-secondary;
       background-color: v.$bg-main;
       color: v.$text-main;
       border: 1px solid v.$bg-tertiary;
+      @media (max-width: 768px) {
+        max-width: 100%;
+        font-size: m.$font-size-small;
+      }
+      @media (max-width: 500px) {
+        margin-bottom: 0;
+      }
     }
   }
 
