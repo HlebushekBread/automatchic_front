@@ -1,10 +1,12 @@
 @if (!isAuthenticated()) {
-  <app-login-form></app-login-form>
+  <app-auth-form></app-auth-form>
 } @else {
-  <span style="color: white">
-    {{ tokenUsername() }}
-    {{ tokenFullName() }}
-    {{ tokenGroup() }}
-  </span>
-  <button (click)="logout()">Выйти</button>
+  <div class="tmp-box">
+    Вы вошли как:<br />
+    {{ username() }}<br />
+    <br />
+    Здесь будет окно редактирования профля. <br />
+    Когда-нибудь, но не сейчас.
+  </div>
+  <button class="btn" (click)="logout()">Выйти</button>
 }

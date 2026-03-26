@@ -52,8 +52,7 @@
     transition: v.$transition;
 
     &:hover {
-      color: v.$text-active;
-      border-color: v.$text-main;
+      background-color: v.$bg-tertiary;
     }
   }
 
@@ -260,9 +259,8 @@
     user-select: none;
     transition: v.$transition;
 
-    &:hover {
-      color: v.$text-active;
-      border-color: v.$text-main;
+    &:hover:not(:disabled) {
+      background-color: v.$bg-tertiary;
     }
 
     &:disabled {
@@ -290,9 +288,14 @@
     font-size: m.$font-size-small;
   }
   font-weight: bold;
+  transition: v.$transition;
 
   @media (max-width: 1000px) {
     display: block;
+  }
+
+  &:hover {
+    background-color: v.$bg-tertiary;
   }
 }
 

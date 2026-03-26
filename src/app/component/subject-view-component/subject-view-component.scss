@@ -142,11 +142,13 @@
     padding: 0 16px;
     box-sizing: border-box;
     font-size: v.$font-size-base;
-    @media (max-width: 768px) {
-      font-size: m.$font-size-base;
-    }
     transition: v.$transition;
     appearance: none;
+
+    @media (max-width: 768px) {
+      height: m.$control-height;
+      font-size: m.$font-size-base;
+    }
 
     &.ng-invalid.ng-touched {
       color: v.$status-red-text;
@@ -245,15 +247,17 @@
     border-color: v.$bg-tertiary;
     border-radius: v.$border-radius-secondary;
     font-size: v.$font-size-small;
-    @media (max-width: 768px) {
-      font-size: m.$font-size-small;
-    }
     font-weight: 600;
     cursor: pointer;
     transition: v.$transition;
 
+    @media (max-width: 768px) {
+      height: m.$control-height;
+      font-size: m.$font-size-small;
+    }
+
     &:hover:not(:disabled) {
-      border-color: v.$text-main;
+      background-color: v.$bg-tertiary;
     }
 
     &.edit {
@@ -261,7 +265,8 @@
       background-color: v.$status-yellow-bg;
       border-color: v.$status-yellow-border;
       &:hover {
-        border-color: v.$status-yellow-highlight;
+        background-color: v.$status-yellow-border;
+        border-color: transparent;
       }
     }
 
@@ -270,7 +275,8 @@
       background-color: v.$status-green-bg;
       border-color: v.$status-green-border;
       &:hover {
-        border-color: v.$status-green-highlight;
+        background-color: v.$status-green-border;
+        border-color: transparent;
       }
     }
 
@@ -279,7 +285,8 @@
       background-color: v.$status-red-bg;
       border-color: v.$status-red-border;
       &:hover {
-        border-color: v.$status-red-highlight;
+        background-color: v.$status-red-border;
+        border-color: transparent;
       }
     }
   }
@@ -418,11 +425,13 @@ input[type='number'] {
       border-radius: v.$border-radius-secondary;
       color: v.$text-main;
       font-size: v.$font-size-base;
-      @media (max-width: 768px) {
-        font-size: m.$font-size-base;
-      }
       transition: v.$transition;
       outline: none;
+
+      @media (max-width: 768px) {
+        height: m.$control-height;
+        font-size: m.$font-size-base;
+      }
 
       &:focus {
         border-color: v.$text-main;
@@ -452,15 +461,17 @@ input[type='number'] {
     border-color: v.$bg-tertiary;
     border-radius: v.$border-radius-secondary;
     font-size: v.$font-size-small;
-    @media (max-width: 768px) {
-      font-size: m.$font-size-small;
-    }
     font-weight: 600;
     cursor: pointer;
     transition: v.$transition;
 
+    @media (max-width: 768px) {
+      height: m.$control-height;
+      font-size: m.$font-size-small;
+    }
+
     &:hover:not(:disabled) {
-      border-color: v.$text-main;
+      background-color: v.$bg-tertiary;
     }
 
     &.delete {
@@ -468,8 +479,8 @@ input[type='number'] {
       background-color: v.$status-red-bg;
       border-color: v.$status-red-border;
       &:hover {
-        background-color: v.$status-red-bg;
-        border-color: v.$status-red-highlight;
+        background-color: v.$status-red-border;
+        border-color: transparent;
       }
     }
   }
@@ -505,15 +516,17 @@ input[type='number'] {
       border-color: v.$bg-tertiary;
       border-radius: v.$border-radius-secondary;
       font-size: v.$font-size-small;
-      @media (max-width: 768px) {
-        font-size: m.$font-size-small;
-      }
       font-weight: 600;
       cursor: pointer;
       transition: v.$transition;
 
+      @media (max-width: 768px) {
+        height: m.$control-height;
+        font-size: m.$font-size-small;
+      }
+
       &:hover:not(:disabled) {
-        border-color: v.$text-main;
+        background-color: v.$bg-tertiary;
       }
     }
 
@@ -820,14 +833,16 @@ input[type='number'] {
       padding: 0 8px;
       box-sizing: border-box;
       font-size: v.$font-size-small;
+      transition: v.$transition;
+
       @media (max-width: 768px) {
+        height: m.$control-height;
         font-size: m.$font-size-small;
       }
-      transition: v.$transition;
 
       &:hover {
         outline: none;
-        border-color: v.$text-main;
+        background-color: v.$bg-tertiary;
       }
 
       &.edit {
@@ -835,7 +850,8 @@ input[type='number'] {
         background-color: v.$status-yellow-bg;
         border-color: v.$status-yellow-border;
         &:hover {
-          border-color: v.$status-yellow-highlight;
+          border-color: v.$status-yellow-bg;
+          border-color: transparent;
         }
       }
 
@@ -844,7 +860,8 @@ input[type='number'] {
         background-color: v.$status-green-bg;
         border-color: v.$status-green-border;
         &:hover {
-          border-color: v.$status-green-highlight;
+          border-color: v.$status-green-bg;
+          border-color: transparent;
         }
       }
 
@@ -853,7 +870,8 @@ input[type='number'] {
         background-color: v.$status-red-bg;
         border-color: v.$status-red-border;
         &:hover {
-          border-color: v.$status-red-highlight;
+          background-color: v.$status-red-border;
+          border-color: transparent;
         }
       }
     }
@@ -870,17 +888,19 @@ input[type='number'] {
   padding: auto;
   box-sizing: border-box;
   font-size: v.$font-size-small;
-  @media (max-width: 768px) {
-    font-size: m.$font-size-small;
-  }
   transition: v.$transition;
   display: flex;
   justify-content: center;
   align-items: center;
 
+  @media (max-width: 768px) {
+    height: m.$control-height;
+    font-size: m.$font-size-small;
+  }
+
   &:hover:not(:disabled) {
     outline: none;
-    border-color: v.$text-main;
+    background-color: v.$bg-tertiary;
   }
 
   &:disabled {
@@ -927,6 +947,6 @@ input[type='number'] {
     min-height: calc(v.$control-height * 0.8) + calc((v.$control-height) * 5) + calc(20px * 4);
   }
   @media (max-width: 768px) {
-    min-height: calc(v.$control-height * 0.8) + calc(v.$control-height * 6) + calc(20px * 5);
+    min-height: m.$control-height + calc(m.$control-height * 6) + calc(35px * 5);
   }
 }

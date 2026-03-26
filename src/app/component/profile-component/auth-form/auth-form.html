@@ -1,0 +1,70 @@
+<div class="auth-card">
+  <form [formGroup]="loginForm" class="auth-form">
+    <div class="form-group">
+      <label class="form-label" for="username">Логин</label>
+      <input
+        class="form-input"
+        id="username"
+        type="text"
+        formControlName="username"
+        placeholder="example@mail.com"
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="password">Пароль</label>
+      <input
+        class="form-input"
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+      />
+    </div>
+
+    @if (isRegisterMode()) {
+      <div class="form-group">
+        <label class="form-label" for="fullName">Имя (необяз.)</label>
+        <input
+          class="form-input"
+          id="fullName"
+          type="password"
+          formControlName="fullName"
+          placeholder="Джеффри Эпштейн"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="group">Группа (необяз.)</label>
+        <input
+          class="form-input"
+          id="group"
+          type="group"
+          formControlName="group"
+          placeholder="БИТВ-23-СП-1"
+        />
+      </div>
+
+      <button
+        type="button"
+        class="submit-btn"
+        [disabled]="loginForm.invalid"
+        (click)="onRegister()"
+      >
+        Зарегистрироваться
+      </button>
+    } @else {
+      <button class="submit-btn" type="button" [disabled]="loginForm.invalid" (click)="onLogin()">
+        Войти
+      </button>
+    }
+
+    @if (error()) {
+      <div class="error">{{ error() }}</div>
+    }
+    <span class="mid-span">Или</span>
+    <button class="submit-btn switch" type="button" (click)="isRegisterMode.set(!isRegisterMode())">
+      {{ isRegisterMode() ? 'Вход' : 'Регистрация' }}
+    </button>
+  </form>
+</div>

@@ -15,6 +15,14 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
+  register(user: { username: string; password: string; fullName: string; group: string }) {
+    return this.http.post(`${environment.apiUrl}/auth/register`, user).pipe(
+      tap((response) => {
+        this.doLoginUser(response as token);
+      }),
+    );
+  }
+
   login(user: { username: string; password: string }) {
     return this.http.post(`${environment.apiUrl}/auth/login`, user).pipe(
       tap((response) => {

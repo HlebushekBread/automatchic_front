@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../service/auth-service';
-import { LoginForm } from './login-form/login-form';
+import { AuthForm } from './auth-form/auth-form';
 
 @Component({
   selector: 'app-profile-component',
-  imports: [LoginForm],
+  imports: [AuthForm],
   templateUrl: './profile-component.html',
   styleUrl: './profile-component.scss',
 })
@@ -15,6 +15,8 @@ export class ProfileComponent {
   readonly tokenUsername = signal(this.authService.getTokenUsername());
   readonly tokenFullName = signal(this.authService.getTokenFullName());
   readonly tokenGroup = signal(this.authService.getTokenGroup());
+
+  username = signal(this.authService.getTokenUsername());
 
   logout() {
     console.log('Выход...');
