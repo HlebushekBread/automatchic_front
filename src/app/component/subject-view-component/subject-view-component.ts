@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, computed, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  untracked,
+} from '@angular/core';
 import {
   GradeInfo,
   GradingTypeTranslation,
@@ -31,7 +39,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
   templateUrl: './subject-view-component.html',
   styleUrl: './subject-view-component.scss',
 })
-export class SubjectViewComponent {
+export class SubjectViewComponent implements OnInit {
   protected readonly Math = Math;
 
   private taskService = inject(TaskService);

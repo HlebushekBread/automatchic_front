@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../service/auth-service';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-form',
@@ -12,6 +13,7 @@ import { take } from 'rxjs';
 })
 export class AuthForm {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.email]),
@@ -20,10 +22,11 @@ export class AuthForm {
     group: new FormControl(''),
   });
 
-  error = signal('');
+  errorMessage = signal('');
   isRegisterMode = signal(false);
 
   onLogin() {
+    this.errorMessage.set('');
     if (this.loginForm.valid) {
       this.authService
         .login({
@@ -33,17 +36,17 @@ export class AuthForm {
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.error.set('');
             window.location.reload();
           },
           error: () => {
-            this.error.set('Неверные данные');
+            this.errorMessage.set('Неверные данные');
           },
         });
     }
   }
 
   onRegister() {
+    this.errorMessage.set('');
     if (this.loginForm.valid) {
       this.authService
         .register({
@@ -55,11 +58,10 @@ export class AuthForm {
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.error.set('');
             window.location.reload();
           },
           error: () => {
-            this.error.set('Пользователь существует');
+            this.errorMessage.set('Пользователь существует');
           },
         });
     }

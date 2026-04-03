@@ -1,22 +1,79 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../service/auth-service';
 import { AuthForm } from './auth-form/auth-form';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../../service/user-service';
 
 @Component({
   selector: 'app-profile-component',
-  imports: [AuthForm],
+  imports: [AuthForm, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './profile-component.html',
   styleUrl: './profile-component.scss',
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private formBuilder = inject(FormBuilder);
 
   readonly isAuthenticated = signal(this.authService.isAuthenticated());
   readonly tokenUsername = signal(this.authService.getTokenUsername());
   readonly tokenFullName = signal(this.authService.getTokenFullName());
   readonly tokenGroup = signal(this.authService.getTokenGroup());
 
-  username = signal(this.authService.getTokenUsername());
+  userForm!: FormGroup;
+  savedUser = signal<{ fullName: string; group: string }>({
+    fullName: '',
+    group: '',
+  });
+
+  ngOnInit() {
+    this.userForm.disable();
+    this.userForm.patchValue({
+      fullName: this.tokenFullName(),
+      group: this.tokenGroup(),
+    });
+    this.savedUser.set(this.userForm.getRawValue());
+  }
+
+  constructor() {
+    this.userForm = this.formBuilder.group({
+      fullName: [null],
+      group: [null],
+    });
+  }
+
+  isEdit = signal(false);
+
+  onEdit() {
+    this.isEdit.set(true);
+    this.userForm.enable();
+  }
+
+  onSubmit() {
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.userForm.getRawValue();
+    this.isEdit.set(false);
+    this.userForm.disable();
+
+    this.userService.saveUser(formValue).subscribe({
+      next: (response) => {
+        this.savedUser.set(formValue);
+        this.userForm.patchValue(formValue);
+        this.authService.doLoginUser(response);
+      },
+    });
+  }
+
+  onCancel() {
+    this.isEdit.set(false);
+    this.userForm.patchValue(this.savedUser());
+    this.userForm.disable();
+  }
 
   logout() {
     console.log('Выход...');

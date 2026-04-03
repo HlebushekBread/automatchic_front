@@ -1,21 +1,93 @@
 @use 'variables' as v;
 @use 'mobile' as m;
 
-.tmp-box {
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: v.$text-main;
-  font-size: v.$font-size-base;
-  text-align: center;
-  margin-top: 20%;
+  padding-top: 20px;
   min-width: 300px;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: v.$bg-secondary;
+  color: v.$text-main;
+  border: 2px solid v.$bg-tertiary;
+  border-radius: v.$border-radius-secondary;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.label-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-input {
+  display: flex;
+  align-items: center;
+  height: v.$control-height;
+  background-color: v.$bg-main;
+  border: 2px solid v.$bg-tertiary;
+  border-radius: v.$border-radius-secondary;
+  color: v.$text-main;
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-size: v.$font-size-base;
+  transition: v.$transition;
+  appearance: none;
+
   @media (max-width: 768px) {
+    height: m.$control-height;
     font-size: m.$font-size-base;
+  }
+
+  &.ng-invalid.ng-touched {
+    color: v.$status-red-text;
+    border-color: v.$status-red-border;
+  }
+
+  &.ng-invalid.ng-touched:focus {
+    border-color: brown;
+  }
+
+  &:disabled,
+  &.disabled {
+    background-color: transparent;
+    color: v.$text-active;
+    cursor: default;
+    font-weight: 500;
+  }
+
+  &:focus {
+    outline: none;
+    color: v.$text-active;
+    border-color: v.$text-main;
+  }
+
+  &.textarea {
+    display: block;
+    overflow-y: auto;
+    white-space: normal;
+    word-break: break-word;
+    resize: none;
+    height: v.$control-height * 1.5;
+    padding-top: 12px;
+    @media (max-width: 768px) {
+      height: m.$control-height * 1.5;
+    }
   }
 }
 
 .btn {
   height: v.$control-height;
   width: 100%;
-  margin-top: 8px;
   background-color: v.$bg-secondary;
   color: v.$text-main;
   border: 2px solid v.$bg-tertiary;
@@ -29,12 +101,37 @@
     font-size: m.$font-size-small;
   }
 
-  &:hover:not(:disabled) {
+  &:hover {
     background-color: v.$bg-tertiary;
   }
 
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+  &.submit {
+    color: v.$status-green-text;
+    background-color: v.$status-green-bg;
+    border-color: v.$status-green-border;
+    &:hover {
+      background-color: v.$status-green-border;
+      border-color: transparent;
+    }
+  }
+
+  &.edit {
+    color: v.$status-yellow-text;
+    background-color: v.$status-yellow-bg;
+    border-color: v.$status-yellow-border;
+    &:hover {
+      background-color: v.$status-yellow-border;
+      border-color: transparent;
+    }
+  }
+
+  &.delete {
+    color: v.$status-red-text;
+    background-color: v.$status-red-bg;
+    border-color: v.$status-red-border;
+    &:hover {
+      background-color: v.$status-red-border;
+      border-color: transparent;
+    }
   }
 }

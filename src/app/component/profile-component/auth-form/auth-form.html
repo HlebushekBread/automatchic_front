@@ -59,11 +59,16 @@
       </button>
     }
 
-    @if (error()) {
-      <div class="error">{{ error() }}</div>
+    @if (errorMessage()) {
+      <div class="error">{{ errorMessage() }}</div>
+      <button class="submit-btn" type="button">Забыли пароль?</button>
     }
     <span class="mid-span">Или</span>
-    <button class="submit-btn switch" type="button" (click)="isRegisterMode.set(!isRegisterMode())">
+    <button
+      class="submit-btn switch"
+      type="button"
+      (click)="isRegisterMode.set(!isRegisterMode()); errorMessage.set('')"
+    >
       {{ isRegisterMode() ? 'Вход' : 'Регистрация' }}
     </button>
   </form>

@@ -1,12 +1,29 @@
 @if (!isAuthenticated()) {
   <app-auth-form></app-auth-form>
 } @else {
-  <div class="tmp-box">
-    Вы вошли как:<br />
-    {{ username() }}<br />
-    <br />
-    Здесь будет окно редактирования профля. <br />
-    Когда-нибудь, но не сейчас.
-  </div>
-  <button class="btn" (click)="logout()">Выйти</button>
+  <form class="main-container" [formGroup]="userForm">
+    <div class="label-wrapper">
+      <label>Имя пользователя</label>
+      <span class="form-input disabled">{{ tokenUsername() }}</span>
+    </div>
+    <div class="label-wrapper">
+      <label>Полное имя</label>
+      <textarea
+        class="form-input textarea"
+        formControlName="fullName"
+        placeholder="Джеффри Эпштейн"
+      ></textarea>
+    </div>
+    <div class="label-wrapper">
+      <label>Группа</label>
+      <input class="form-input" formControlName="group" placeholder="БИВТ-23-СП-1" />
+    </div>
+    @if (isEdit()) {
+      <button class="btn submit" (click)="onSubmit()">Подтвердить</button>
+      <button class="btn" (click)="onCancel()">Отменить</button>
+    } @else {
+      <button class="btn edit" (click)="onEdit()">Редактировать</button>
+      <button class="btn" (click)="logout()">Выйти</button>
+    }
+  </form>
 }

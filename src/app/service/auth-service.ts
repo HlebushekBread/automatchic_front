@@ -31,7 +31,7 @@ export class AuthService {
     );
   }
 
-  private doLoginUser(token: token) {
+  doLoginUser(token: token) {
     localStorage.setItem(this.STORAGE_KEY, token.token);
   }
 
