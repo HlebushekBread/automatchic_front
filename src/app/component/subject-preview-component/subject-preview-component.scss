@@ -126,12 +126,15 @@
     &.textarea {
       display: block;
       overflow-y: auto;
+      height: 100%;
+      background-color: v.$bg-secondary;
+      border: none;
       white-space: normal;
       word-break: break-word;
       resize: none;
       padding-top: 12px;
       @media (max-width: 768px) {
-        height: 80px;
+        height: 100px;
       }
     }
   }

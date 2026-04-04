@@ -21,9 +21,29 @@
     @if (isEdit()) {
       <button class="btn submit" (click)="onSubmit()">Подтвердить</button>
       <button class="btn" (click)="onCancel()">Отменить</button>
+      <button class="btn delete" (click)="isDeleteModalOpen.set(true)">Удалить</button>
     } @else {
       <button class="btn edit" (click)="onEdit()">Редактировать</button>
       <button class="btn" (click)="logout()">Выйти</button>
     }
   </form>
+}
+
+@if (isDeleteModalOpen()) {
+  <div class="modal-overlay" (click)="isDeleteModalOpen.set(false)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Вы уверены?</h3>
+      <h4>
+        Это действие нельзя отменить. <br />
+        Ваши дисциплины будут удалены <br />
+        без возможности восстановления. <br />
+        <br />
+        Ваш логин сразу же освободится.
+      </h4>
+      <div class="modal-actions">
+        <button class="submit-btn delete" (click)="onDelete()">Удалить</button>
+        <button class="submit-btn" (click)="isDeleteModalOpen.set(false)">Отменить</button>
+      </div>
+    </div>
+  </div>
 }

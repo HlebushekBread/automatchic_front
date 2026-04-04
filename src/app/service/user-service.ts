@@ -24,4 +24,8 @@ export class UserService {
   saveUser(data: { fullName: string; group: string }): Observable<{ token: string }> {
     return this.http.patch<{ token: string }>(`${environment.apiUrl}/users/update/self`, data);
   }
+
+  deleteSelf(): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/users/delete/self`);
+  }
 }

@@ -11,6 +11,7 @@ import { switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TaskTypeTranslation } from '../../service/task-service';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-subject-preview-component',
@@ -19,9 +20,12 @@ import { DatePipe } from '@angular/common';
   styleUrl: './subject-preview-component.scss',
 })
 export class SubjectPreviewComponent implements OnInit {
+  private authService = inject(AuthService);
   private subjectService = inject(SubjectService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  readonly isAuthenticated = this.authService.isAuthenticated();
 
   readonly gradingTypeTranslation = GradingTypeTranslation;
   gradingTypes = Object.keys(this.gradingTypeTranslation);
@@ -96,5 +100,9 @@ export class SubjectPreviewComponent implements OnInit {
         this.router.navigate(['/subjects/view', response.id]);
       },
     });
+  }
+
+  onLogin() {
+    this.router.navigate(['/profile']);
   }
 }

@@ -76,9 +76,21 @@ export class ProfileComponent implements OnInit {
   }
 
   logout() {
-    console.log('Выход...');
-
     this.authService.logout();
     window.location.reload();
+  }
+
+  isDeleteModalOpen = signal(false);
+
+  onDelete() {
+    this.isEdit.set(false);
+    this.userForm.disable();
+    this.userService.deleteSelf().subscribe({
+      next: () => {
+        this.isDeleteModalOpen.set(false);
+        this.logout();
+      },
+      error: () => {},
+    });
   }
 }

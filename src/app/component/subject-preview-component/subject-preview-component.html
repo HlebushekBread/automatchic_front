@@ -12,7 +12,7 @@
               <label class="info-label">Преподаватель</label>
               <span class="info-field">{{ subject().teacher || 'Преподаватель не указан' }}</span>
               <label class="info-label">Описание</label>
-              <span class="info-field">{{ subject().description }}</span>
+              <textarea class="info-field textarea" disabled>{{ subject().description }}</textarea>
             </div>
 
             <div class="info-column">
@@ -50,10 +50,22 @@
         </div>
 
         <div class="info-column actions">
-          <div></div>
-          <div class="button-group">
-            <button type="button" class="submit-btn edit" (click)="onCopy()">Скопировать</button>
-          </div>
+          @if (!isAuthenticated) {
+            <div></div>
+            <div class="info-label" style="text-align: center">
+              Чтобы иметь возможность <br />
+              скопировать себе дисциплину, <br />
+              войдите в профиль.
+            </div>
+            <div class="button-group">
+              <button type="button" class="submit-btn edit" (click)="onLogin()">Войти</button>
+            </div>
+          } @else {
+            <div></div>
+            <div class="button-group">
+              <button type="button" class="submit-btn edit" (click)="onCopy()">Скопировать</button>
+            </div>
+          }
         </div>
       </div>
       <div class="task-section">

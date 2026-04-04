@@ -188,6 +188,7 @@ export class SubjectViewComponent implements OnInit {
     });
   }
 
+  /* Это работает только с https
   onCopyLink() {
     const url = window.location.href;
 
@@ -200,6 +201,49 @@ export class SubjectViewComponent implements OnInit {
         console.error('Ошибка копирования:', err);
       });
   }
+  */
+
+  //А эта хтонь работает и для http
+  onCopyLink() {
+    const url = window.location.href;
+    const textToCopy = url.replace('view', 'browse');
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => console.log('Ссылка скопирована (Modern API)!'))
+        .catch((err) => console.error('Ошибка копирования:', err));
+    } else {
+      this.unsecuredCopyToClipboard(textToCopy);
+    }
+  }
+
+  private unsecuredCopyToClipboard(text: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
+    document.body.appendChild(textArea);
+
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        console.log('Ссылка скопирована (Fallback)!');
+      } else {
+        console.error('Не удалось скопировать текст');
+      }
+    } catch (err) {
+      console.error('Ошибка в fallback-методе:', err);
+    }
+
+    document.body.removeChild(textArea);
+  }
+  //Снести неописуемый ужас сверху при переходе на https
 
   isEdit = signal(false);
 
