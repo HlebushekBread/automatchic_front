@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface token {
@@ -37,6 +37,10 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.STORAGE_KEY);
+  }
+
+  confirm(token: string): Observable<void> {
+    return this.http.get<void>(`${environment.apiUrl}/auth/confirm/${token}`);
   }
 
   getTokenPayload() {

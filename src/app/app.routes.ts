@@ -4,6 +4,7 @@ import { SubjectList } from './component/subject-list/subject-list';
 import { authGuard } from './util/auth.guard';
 import { SubjectViewComponent } from './component/subject-view-component/subject-view-component';
 import { SubjectPreviewComponent } from './component/subject-preview-component/subject-preview-component';
+import { EmailConfirmComponent } from './component/email-confirm-component/email-confirm-component';
 
 export const routes: Routes = [
   {
@@ -34,5 +35,9 @@ export const routes: Routes = [
     pathMatch: 'full',
     component: SubjectViewComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'confirm',
+    component: EmailConfirmComponent,
   },
 ];
