@@ -21,6 +21,8 @@ export class ProfileComponent implements OnInit {
   readonly tokenFullName = signal(this.authService.getTokenFullName());
   readonly tokenGroup = signal(this.authService.getTokenGroup());
 
+  isEnabled = signal(false);
+
   userForm!: FormGroup;
   savedUser = signal<{ fullName: string; group: string }>({
     fullName: '',
@@ -34,6 +36,11 @@ export class ProfileComponent implements OnInit {
       group: this.tokenGroup(),
     });
     this.savedUser.set(this.userForm.getRawValue());
+    this.userService.checkEnabledSelf().subscribe({
+      next: (response) => {
+        this.isEnabled.set(response);
+      },
+    });
   }
 
   constructor() {

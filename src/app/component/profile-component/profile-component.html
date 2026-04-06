@@ -1,32 +1,44 @@
 @if (!isAuthenticated()) {
   <app-auth-form></app-auth-form>
 } @else {
-  <form class="main-container" [formGroup]="userForm">
-    <div class="label-wrapper">
-      <label>Имя пользователя</label>
-      <span class="form-input disabled">{{ tokenUsername() }}</span>
-    </div>
-    <div class="label-wrapper">
-      <label>Полное имя</label>
-      <textarea
-        class="form-input textarea"
-        formControlName="fullName"
-        placeholder="Джеффри Эпштейн"
-      ></textarea>
-    </div>
-    <div class="label-wrapper">
-      <label>Группа</label>
-      <input class="form-input" formControlName="group" placeholder="БИВТ-23-СП-1" />
-    </div>
-    @if (isEdit()) {
-      <button class="btn submit" (click)="onSubmit()">Подтвердить</button>
-      <button class="btn" (click)="onCancel()">Отменить</button>
-      <button class="btn delete" (click)="isDeleteModalOpen.set(true)">Удалить</button>
-    } @else {
-      <button class="btn edit" (click)="onEdit()">Редактировать</button>
-      <button class="btn" (click)="logout()">Выйти</button>
+  <div class="main-wrapper">
+    @if (!isEnabled()) {
+      <button class="warning">
+        Подтвердите аккаунт,<br />
+        иначе он будет удален <br />
+        в течение одного дня. <br />
+        Письмо отправлено на почту<br />
+        (если она существует) <br />
+        <!-- <b style="padding: 0">Отправить письмо повторно</b> -->
+      </button>
     }
-  </form>
+    <form class="main-container" [formGroup]="userForm">
+      <div class="label-wrapper">
+        <label>Имя пользователя</label>
+        <span class="form-input disabled">{{ tokenUsername() }}</span>
+      </div>
+      <div class="label-wrapper">
+        <label>Полное имя</label>
+        <textarea
+          class="form-input textarea"
+          formControlName="fullName"
+          placeholder="Джеффри Эпштейн"
+        ></textarea>
+      </div>
+      <div class="label-wrapper">
+        <label>Группа</label>
+        <input class="form-input" formControlName="group" placeholder="БИВТ-23-СП-1" />
+      </div>
+      @if (isEdit()) {
+        <button class="btn submit" (click)="onSubmit()">Подтвердить</button>
+        <button class="btn" (click)="onCancel()">Отменить</button>
+        <button class="btn delete" (click)="isDeleteModalOpen.set(true)">Удалить</button>
+      } @else {
+        <button class="btn edit" (click)="onEdit()">Редактировать</button>
+        <button class="btn" (click)="logout()">Выйти</button>
+      }
+    </form>
+  </div>
 }
 
 @if (isDeleteModalOpen()) {

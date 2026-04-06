@@ -28,4 +28,8 @@ export class UserService {
   deleteSelf(): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/users/delete/self`);
   }
+
+  checkEnabledSelf(): Observable<boolean> {
+    return this.http.get<boolean>(`${environment.apiUrl}/users/check/self`);
+  }
 }
