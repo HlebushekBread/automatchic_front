@@ -38,11 +38,13 @@ export class ProfileComponent implements OnInit {
       group: this.tokenGroup(),
     });
     this.savedUser.set(this.userForm.getRawValue());
-    this.userService.checkEnabledSelf().subscribe({
-      next: (response) => {
-        this.isEnabled.set(response);
-      },
-    });
+    if (this.authService.isAuthenticated()) {
+      this.userService.checkEnabledSelf().subscribe({
+        next: (response) => {
+          this.isEnabled.set(response);
+        },
+      });
+    }
   }
 
   constructor() {
