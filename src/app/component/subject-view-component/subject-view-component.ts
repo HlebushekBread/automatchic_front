@@ -188,7 +188,8 @@ export class SubjectViewComponent implements OnInit {
     });
   }
 
-  /* Это работает только с https
+  //Это работает только с https
+  /*
   onCopyLink() {
     const url = window.location.href;
 

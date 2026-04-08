@@ -1,0 +1,196 @@
+@use 'variables' as v;
+@use 'mobile' as m;
+
+:host {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: calc(100vh - v.$header-height);
+  @media (max-width: 768px) {
+    height: calc(100vh - m.$header-height - m.$navbar-height);
+  }
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  height: fit-content;
+}
+
+.hero-card,
+.info-card {
+  width: 100%;
+  background-color: v.$bg-secondary;
+  padding: 32px;
+  border-radius: v.$border-radius-main;
+  box-shadow: v.$shadow-main;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.hero-title {
+  color: v.$text-active;
+  font-size: 2rem;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+  margin-bottom: 12px;
+  font-weight: 700;
+  transition: v.$transition;
+}
+
+.hero-subtitle {
+  color: v.$text-main;
+  font-size: v.$font-size-base;
+  @media (max-width: 768px) {
+    font-size: m.$font-size-base;
+  }
+  margin-bottom: 24px;
+}
+
+.cta-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  transition: v.$transition;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.primary-btn,
+.secondary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: v.$control-height;
+  padding: 0 24px;
+  border-radius: v.$border-radius-secondary;
+  font-size: v.$font-size-small;
+  @media (max-width: 768px) {
+    font-size: m.$font-size-small;
+  }
+  font-weight: 600;
+  text-decoration: none;
+  transition: v.$transition;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background-color: transparent;
+  color: v.$text-main;
+  border: 2px solid v.$bg-tertiary;
+  &:hover {
+    background-color: v.$bg-tertiary;
+  }
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  transition: v.$transition;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    background-color: v.$bg-secondary;
+    padding: 10px 20px;
+    border-radius: v.$border-radius-main;
+    text-align: center;
+    border: 1px solid v.$bg-tertiary;
+
+    .feature-icon {
+      font-size: 24px;
+      @media (max-width: 768px) {
+        font-size: 18;
+      }
+      margin-bottom: 8px;
+      display: block;
+    }
+    .feature-name {
+      color: v.$text-active;
+      font-size: v.$font-size-base;
+      @media (max-width: 768px) {
+        font-size: m.$font-size-base;
+      }
+      margin-bottom: 4px;
+    }
+    .feature-text {
+      color: v.$text-main;
+      font-size: v.$font-size-small;
+      @media (max-width: 768px) {
+        font-size: m.$font-size-small;
+      }
+    }
+  }
+}
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+
+  .info-label {
+    color: v.$text-active;
+    margin: 0;
+    margin-top: 10px;
+  }
+
+  .stack-group {
+    margin-top: 10px;
+    color: v.$text-main;
+    font-size: v.$font-size-base;
+    @media (max-width: 768px) {
+      font-size: m.$font-size-base;
+    }
+  }
+
+  .tech-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+
+    .tech-row {
+      display: flex;
+      gap: 8px;
+
+      .tech-tag {
+        background: v.$bg-tertiary;
+        color: v.$text-main;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: v.$font-size-small;
+        @media (max-width: 768px) {
+          font-size: m.$font-size-small;
+        }
+      }
+    }
+  }
+
+  .github-link {
+    color: v.$text-main;
+    font-size: v.$font-size-base;
+    @media (max-width: 768px) {
+      font-size: m.$font-size-base;
+    }
+    text-decoration: underline;
+    transition: v.$transition;
+    text-decoration: none;
+    &:hover {
+      color: v.$text-active;
+    }
+  }
+}

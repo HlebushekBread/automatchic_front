@@ -19,7 +19,7 @@
           type="text"
           [ngModel]="searchQuery()"
           (ngModelChange)="searchQuery.set($event)"
-          placeholder="Введите название..."
+          placeholder="Начните воодить..."
         />
       </div>
       <div class="filter-group">
@@ -57,7 +57,15 @@
       }
     } @empty {
       <div class="message">
-        <p style="text-align: center; line-height: 1.6">Ничего не найдено.</p>
+        <p style="text-align: center; line-height: 1.6">
+          {{
+            subjectList().length == 0
+              ? 'Здесь появятся ' +
+                (mode() == 'view' ? 'созданные вами' : 'публичные') +
+                ' дисциплины. Пока тут пусто.'
+              : 'Ничего не найдено.'
+          }}
+        </p>
       </div>
     }
   </main>

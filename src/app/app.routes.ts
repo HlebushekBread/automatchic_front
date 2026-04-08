@@ -6,8 +6,14 @@ import { SubjectViewComponent } from './component/subject-view-component/subject
 import { SubjectPreviewComponent } from './component/subject-preview-component/subject-preview-component';
 import { EmailConfirmComponent } from './component/email-confirm-component/email-confirm-component';
 import { PasswordResetComponent } from './component/password-reset-component/password-reset-component';
+import { HomePage } from './component/home-page/home-page';
 
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    component: HomePage,
+  },
   {
     path: 'profile',
     pathMatch: 'full',
