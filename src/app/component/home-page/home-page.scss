@@ -84,7 +84,7 @@
 }
 
 .primary-btn {
-  background-color: transparent;
+  background-color: v.$bg-main;
   color: v.$text-main;
   border: 2px solid v.$bg-tertiary;
   &:hover {
@@ -146,6 +146,11 @@
     margin-top: 10px;
   }
 
+  .info-group {
+    font-size: v.$font-size-small;
+    color: v.$text-main;
+  }
+
   .stack-group {
     margin-top: 10px;
     color: v.$text-main;
@@ -175,12 +180,15 @@
         @media (max-width: 768px) {
           font-size: m.$font-size-small;
         }
+        &.main {
+          color: v.$text-active;
+        }
       }
     }
   }
 
   .github-link {
-    color: v.$text-main;
+    color: v.$grade-4;
     font-size: v.$font-size-base;
     @media (max-width: 768px) {
       font-size: m.$font-size-base;
@@ -188,8 +196,5 @@
     text-decoration: underline;
     transition: v.$transition;
     text-decoration: none;
-    &:hover {
-      color: v.$text-active;
-    }
   }
 }
