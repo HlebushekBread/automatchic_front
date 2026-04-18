@@ -1,0 +1,51 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <h2
+      class="hero-title"
+      [class.today]="
+        selectedDate().toLocaleDateString('en-CA').split('T')[0].slice(0, 7) == today().slice(0, 7)
+      "
+    >
+      {{ monthLabel() }}
+    </h2>
+
+    <div class="nav-group">
+      <button class="nav-btn" (click)="changeMonth(-1)">‹</button>
+      <button class="nav-btn" (click)="changeMonth(1)">›</button>
+    </div>
+  </div>
+  <div class="calendar-grid">
+    <div class="day-name">Пн</div>
+    <div class="day-name">Вт</div>
+    <div class="day-name">Ср</div>
+    <div class="day-name">Чт</div>
+    <div class="day-name">Пт</div>
+    <div class="day-name">Сб</div>
+    <div class="day-name">Вс</div>
+
+    @for (day of currentMonthDays(); track day.dayNumber) {
+      <div
+        class="calendar-day"
+        [class.today]="day.iso.toString() == today()"
+        [style.grid-column-start]="day.gridColumn || 'auto'"
+      >
+        <span class="day-number">
+          {{ day.dayNumber }}
+          <span class="day-weekday"> - {{ day.weekday }}</span>
+        </span>
+        <div class="task-list">
+          @for (task of (tasksByDate()[day.iso] ?? []).slice(0, 3); track task.id) {
+            <div class="task-item" [routerLink]="'/subjects/view/' + task.subjectId">
+              <span class="task-name">{{ task.name }}</span>
+              <span class="task-due">{{ task.dueDate.split('T')[1].slice(0, 5) }}</span>
+            </div>
+          }
+
+          @if ((tasksByDate()[day.iso]?.length ?? 0) > 3) {
+            <div class="more-tasks">+ еще {{ tasksByDate()[day.iso].length - 3 }}</div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

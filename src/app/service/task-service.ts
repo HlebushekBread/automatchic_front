@@ -29,7 +29,7 @@ export interface Task {
   position: number;
 }
 
-export interface TaskDto {
+export interface FullTask {
   id: number;
   name: string;
   type: string;
@@ -41,13 +41,21 @@ export interface TaskDto {
   subjectId: number;
 }
 
+export interface BasicTask {
+  id: number;
+  name: string;
+  type: string;
+  dueDate: Date;
+  subjectId: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
   private http = inject(HttpClient);
 
-  saveTask(data: TaskDto): Observable<{ id: number }> {
+  saveTask(data: FullTask): Observable<{ id: number }> {
     return this.http.put<{ id: number }>(`${environment.apiUrl}/tasks/save`, data);
   }
 
@@ -57,5 +65,9 @@ export class TaskService {
 
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/tasks/delete/${id}`);
+  }
+
+  getScheduled(): Observable<BasicTask[]> {
+    return this.http.get<BasicTask[]>(`${environment.apiUrl}/tasks/scheduled/self`);
   }
 }

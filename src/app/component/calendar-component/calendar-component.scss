@@ -1,0 +1,192 @@
+@use 'variables' as v;
+@use 'mobile' as m;
+
+%truncate {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:host {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: calc(100vh - v.$header-height);
+  @media (max-width: 768px) {
+    height: calc(100vh - m.$header-height - m.$navbar-height);
+  }
+}
+
+.calendar-header {
+  justify-self: center;
+  width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  margin: 20px 0;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  .hero-title {
+    color: v.$text-main;
+    text-align: center;
+    margin: 0;
+
+    &.today {
+      color: v.$text-active;
+    }
+
+    @media (max-width: 768px) {
+      min-width: auto;
+      width: 100%;
+    }
+  }
+
+  .nav-group {
+    display: contents;
+
+    @media (max-width: 768px) {
+      display: flex;
+      width: 100%;
+      gap: 8px;
+    }
+  }
+}
+
+.nav-btn {
+  background-color: v.$bg-secondary;
+  color: v.$text-active;
+  border: 1px solid v.$bg-tertiary;
+  border-radius: v.$border-radius-secondary;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: v.$transition;
+
+  &:hover {
+    background-color: v.$bg-tertiary;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    flex: 1;
+    height: v.$control-height;
+    font-size: 20px;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.calendar-day {
+  background-color: v.$bg-secondary;
+  border-radius: v.$border-radius-secondary;
+  padding: 12px;
+  min-height: 100px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: v.$transition;
+  color: v.$text-main;
+
+  @media (max-width: 768px) {
+    grid-column-start: auto !important;
+  }
+
+  &.today {
+    border: 2px solid v.$text-main;
+    color: v.$text-active;
+  }
+
+  .day-number {
+    font-weight: 700;
+    font-size: v.$font-size-small;
+  }
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.task-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: v.$font-size-small;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: v.$bg-secondary;
+  border: 2px solid v.$bg-tertiary;
+  overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    background-color: v.$bg-tertiary;
+  }
+
+  .task-name {
+    @extend %truncate;
+    color: v.$text-active;
+  }
+
+  .task-due {
+    color: v.$text-main;
+  }
+}
+
+.more-tasks {
+  color: v.$text-main;
+  padding: 2px 8px;
+  font-weight: 600;
+
+  /*
+  &:hover {
+    color: v.$text-active;
+  }
+  */
+}
+
+.day-name {
+  text-align: center;
+  color: v.$text-main;
+  font-size: v.$font-size-base;
+  font-weight: 600;
+  padding-bottom: 8px;
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.day-weekday {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: inline;
+  }
+}

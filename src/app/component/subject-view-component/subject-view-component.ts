@@ -333,12 +333,11 @@ export class SubjectViewComponent implements OnInit {
   // -------------------------------------------------------------- //
 
   private createTaskForm(task?: Task): FormGroup {
-    const now = new Date();
     const subjectId = untracked(() => this.savedSubject()?.id);
     const group = this.formBuilder.group({
       id: [task?.id || 0, [Validators.required]],
       name: [task?.name || 'Название', [Validators.required]],
-      dueDate: [task?.dueDate || now.toISOString().split('T')[0] + 'T00:00', [Validators.required]],
+      dueDate: [task?.dueDate || null],
       receivedGrade: [task?.receivedGrade || 0, [Validators.required, Validators.min(0)]],
       maxGrade: [task?.maxGrade || 0, [Validators.required, Validators.min(0)]],
       gradeWeight: [task?.gradeWeight || 1, [Validators.required, Validators.min(0)]],

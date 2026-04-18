@@ -122,6 +122,11 @@
           -webkit-mask-image: url('/browser.svg');
           mask-image: url('/browser.svg');
         }
+
+        &.calendar {
+          -webkit-mask-image: url('/calendar.svg');
+          mask-image: url('/calendar.svg');
+        }
       }
     }
   }

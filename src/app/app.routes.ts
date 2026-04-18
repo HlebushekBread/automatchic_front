@@ -8,6 +8,7 @@ import { EmailConfirmComponent } from './component/email-confirm-component/email
 import { PasswordResetComponent } from './component/password-reset-component/password-reset-component';
 import { HomePage } from './component/home-page/home-page';
 import { SubjectBrowser } from './component/subject-browser/subject-browser';
+import { CalendarComponent } from './component/calendar-component/calendar-component';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,12 @@ export const routes: Routes = [
     path: 'subjects/view',
     pathMatch: 'full',
     component: SubjectList,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'calendar',
+    pathMatch: 'full',
+    component: CalendarComponent,
     canActivate: [authGuard],
   },
   {
