@@ -29,6 +29,12 @@
 
             <div class="form-column">
               <label class="form-label">Оценивание</label>
+              <select class="form-input" formControlName="evaluationType" (change)="adjustFields()">
+                @for (type of evaluationTypes; track type) {
+                  <option [value]="type">{{ evaluationTypeTranslation[type] }}</option>
+                }
+              </select>
+
               <select class="form-input" formControlName="gradingType" (change)="adjustFields()">
                 @for (type of gradingTypes; track type) {
                   <option [value]="type">{{ gradingTypeTranslation[type] }}</option>
@@ -65,15 +71,19 @@
                         {{ gradeInfo[field.grade + 2].thresholdTranslation }}
                       </label>
 
-                      <input
-                        type="number"
-                        class="form-input grading"
-                        [class.ng-invalid]="
-                          subjectForm.errors?.['gradingChain']?.[errorMapping[field.grade]]
-                        "
-                        [formControlName]="field.control"
-                        (change)="adjustFields()"
-                      />
+                      @if (!isEvaluationTypeAverage()) {
+                        <input
+                          type="number"
+                          class="form-input grading"
+                          [class.ng-invalid]="
+                            subjectForm.errors?.['gradingChain']?.[errorMapping[field.grade]]
+                          "
+                          [formControlName]="field.control"
+                          (change)="adjustFields()"
+                        />
+                      } @else {
+                        <input class="form-input grading" disabled value="-" />
+                      }
                     </div>
                   }
                 }
@@ -136,6 +146,21 @@
           </div>
         </div>
       </form>
+
+      <!-- -------------------------------------------------------- -->
+      @if (isProgressModalOpen() && rawChartData()) {
+        <div class="chart-section">
+          <div class="chart-scroll" #scrollChart>
+            <div
+              echarts
+              class="chart"
+              [options]="chartOption()"
+              [style.width.px]="chartWidth()"
+              [autoResize]="true"
+            ></div>
+          </div>
+        </div>
+      }
 
       <!-- -------------------------------------------------------- -->
       <div class="task-section">
@@ -207,7 +232,7 @@
                     gradeInfo[savedSubject().targetGrade + 2].translation
                   }}</span>
                   -
-                  @if (missingScore() > 0) {
+                  @if (missingScore() != '0.00') {
                     осталось <span class="active-text">{{ missingScore() }}</span>
                   } @else {
                     <span class="active-text">цель достигнута!</span>
@@ -216,7 +241,13 @@
               </div>
             </div>
           </div>
-          <button class="recalculate-button" (click)="recalculate()">Пересчитать максимум</button>
+          @if (!isProgressModalOpen()) {
+            <button class="progress-button" (click)="onShowProgress()">Посмотреть прогресс</button>
+          } @else {
+            <button class="progress-button" (click)="isProgressModalOpen.set(false)">
+              Скрыть прогресс
+            </button>
+          }
         </div>
         <div [formGroup]="taskGroup" style="display: flex; justify-content: center">
           <div

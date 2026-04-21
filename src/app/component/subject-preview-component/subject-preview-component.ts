@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
+  evaluationTypeTranslation,
   FullSubject,
   GradeInfo,
   GradingTypeTranslation,
@@ -30,6 +31,9 @@ export class SubjectPreviewComponent implements OnInit {
   readonly gradingTypeTranslation = GradingTypeTranslation;
   gradingTypes = Object.keys(this.gradingTypeTranslation);
 
+  readonly evaluationTypeTranslation = evaluationTypeTranslation;
+  evaluationTypes = Object.keys(this.evaluationTypeTranslation);
+
   readonly publicityTranslation = PublicityTranslation;
   publicities = Object.keys(this.publicityTranslation);
 
@@ -47,6 +51,7 @@ export class SubjectPreviewComponent implements OnInit {
     teacher: '',
     description: '',
     gradingType: '',
+    evaluationType: '',
     gradingMax: 0,
     grading5: 0,
     grading4: 0,

@@ -36,23 +36,38 @@ export class UserSubjectComponent {
   });
 
   getCurrentScore(): number {
-    return this.subject().tasks.reduce(
-      (sum: number, task: Task) =>
-        sum + (Number(task.receivedGrade) || 0) * (Number(task.gradeWeight) || 1),
-      0,
-    );
+    const total = this.subject().tasks.reduce((sum, task) => {
+      return sum + (Number(task.receivedGrade) || 0) * Number(task.gradeWeight || 0);
+    }, 0);
+
+    let score = 0;
+
+    if (this.subject().evaluationType !== 'AVERAGE') {
+      score = total;
+    } else {
+      const weights = this.subject().tasks.reduce((sum, task) => {
+        return sum + (task.receivedGrade * task.gradeWeight > 0 ? Number(task.gradeWeight) : 0);
+      }, 0);
+      score = weights !== 0 ? total / weights : 0;
+    }
+
+    return Number(score.toFixed(2));
   }
 
-  getMissingScore(): number {
-    const score = this.getCurrentScore();
-    const subject = this.subject();
+  getMissingScore(): string {
+    const v = this.subject();
+    if (!v) return '0';
 
-    if (subject.targetGrade == 4) return subject.gradingMax - score;
-    if (subject.targetGrade == 3) return subject.grading5 - score;
-    if (subject.targetGrade == 2) return subject.grading4 - score;
-    if (subject.targetGrade == 1) return subject.grading3 - score;
-    if (subject.targetGrade == 0) return subject.gradingMin - score;
-    return 0;
+    const gradings = [
+      Number(v.gradingMin) || 0,
+      Number(v.grading3) || 0,
+      Number(v.grading4) || 0,
+      Number(v.grading5) || 0,
+      Number(v.gradingMax) || 0,
+    ];
+
+    const targetValue = gradings[v.targetGrade] || 0;
+    return Math.max(0, targetValue - this.getCurrentScore()).toFixed(2);
   }
 
   getCurrentGrade(): number {

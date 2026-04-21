@@ -1,13 +1,18 @@
 import {
+  afterNextRender,
   ChangeDetectorRef,
   Component,
   computed,
+  effect,
+  ElementRef,
   inject,
   OnInit,
   signal,
   untracked,
+  ViewChild,
 } from '@angular/core';
 import {
+  evaluationTypeTranslation,
   FullSubject,
   GradeInfo,
   GradingTypeTranslation,
@@ -31,11 +36,13 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Task, TaskService, TaskTypeTranslation } from '../../service/task-service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ProgressChartData, ProgressService } from '../../service/progress-service';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 @Component({
   selector: 'app-subject-view-component',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DragDropModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, NgxEchartsModule],
   templateUrl: './subject-view-component.html',
   styleUrl: './subject-view-component.scss',
 })
@@ -44,6 +51,7 @@ export class SubjectViewComponent implements OnInit {
 
   private taskService = inject(TaskService);
   private subjectService = inject(SubjectService);
+  private progressService = inject(ProgressService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
@@ -51,6 +59,9 @@ export class SubjectViewComponent implements OnInit {
 
   readonly gradingTypeTranslation = GradingTypeTranslation;
   gradingTypes = Object.keys(this.gradingTypeTranslation);
+
+  readonly evaluationTypeTranslation = evaluationTypeTranslation;
+  evaluationTypes = Object.keys(this.evaluationTypeTranslation);
 
   readonly publicityTranslation = PublicityTranslation;
   publicities = Object.keys(this.publicityTranslation);
@@ -78,6 +89,7 @@ export class SubjectViewComponent implements OnInit {
     teacher: '',
     description: '',
     gradingType: '',
+    evaluationType: '',
     gradingMax: 0,
     grading5: 0,
     grading4: 0,
@@ -126,6 +138,7 @@ export class SubjectViewComponent implements OnInit {
         teacher: [null],
         description: [null],
         gradingType: [null, [Validators.required]],
+        evaluationType: [null, [Validators.required]],
         gradingMax: [null],
         grading5: [null],
         grading4: [null],
@@ -178,6 +191,7 @@ export class SubjectViewComponent implements OnInit {
       teacher: subject.teacher,
       description: subject.description,
       gradingType: subject.gradingType,
+      evaluationType: subject.evaluationType,
       gradingMax: subject.gradingMax,
       grading5: subject.grading5,
       grading4: subject.grading4,
@@ -259,6 +273,7 @@ export class SubjectViewComponent implements OnInit {
       this.subjectForm.markAllAsTouched();
       return;
     }
+    this.updateCurrentScore();
 
     const formValue = this.subjectForm.getRawValue();
     this.isEdit.set(false);
@@ -298,12 +313,16 @@ export class SubjectViewComponent implements OnInit {
   }
 
   isGradingTypeCredit = signal(false);
+  isEvaluationTypeAverage = signal(false);
+  roundingThreshold = signal(0.5);
 
   adjustFields() {
     const rawValues = this.subjectForm.getRawValue();
     const isCredit = rawValues.gradingType === 'CREDIT';
+    const isAverage = rawValues.evaluationType === 'AVERAGE';
 
     this.isGradingTypeCredit.set(isCredit);
+    this.isEvaluationTypeAverage.set(isAverage);
 
     const gradingMax = Math.max(0, Number(rawValues.gradingMax || 0));
     const grading5 = Math.max(0, Number(rawValues.grading5 || 0));
@@ -319,6 +338,14 @@ export class SubjectViewComponent implements OnInit {
       gradingMin: gradingMin,
     };
 
+    if (isAverage) {
+      updates.gradingMax = 5;
+      updates.grading5 = 4 + this.roundingThreshold();
+      updates.grading4 = 3 + this.roundingThreshold();
+      updates.grading3 = 2 + this.roundingThreshold();
+      updates.gradingMin = 1 + this.roundingThreshold();
+    }
+
     if (isCredit) {
       if (rawValues.targetGrade === 1 || rawValues.targetGrade === 2) {
         this.subjectForm.patchValue({ targetGrade: 3 });
@@ -332,6 +359,159 @@ export class SubjectViewComponent implements OnInit {
 
   // -------------------------------------------------------------- //
 
+  isProgressModalOpen = signal(false);
+  rawChartData = signal<ProgressChartData[] | null>(null);
+
+  @ViewChild('scrollChart') scrollChart!: ElementRef;
+
+  onShowProgress() {
+    this.isProgressModalOpen.set(true);
+
+    this.progressService.getChartDataById(this.savedSubject().id).subscribe((data) => {
+      this.rawChartData.set(data);
+
+      setTimeout(() => {
+        this.scrollChart?.nativeElement.scrollTo({
+          left: this.scrollChart.nativeElement.scrollWidth,
+          behavior: 'smooth',
+        });
+
+        window.dispatchEvent(new Event('resize'));
+      });
+    });
+  }
+
+  onHideProgress() {
+    this.isProgressModalOpen.set(false);
+  }
+
+  chartWidth = computed(() => {
+    const data = this.rawChartData();
+    if (!data) return 0;
+
+    const pxPerPoint = 30;
+    return Math.max(data.length * pxPerPoint, 600);
+  });
+
+  chartOption = computed(() => {
+    const data = this.rawChartData();
+    if (!data) return {};
+
+    const formatted = data.map((d) => ({
+      time: new Date(d.timestampX),
+      current: d.currentScoreY,
+      target: d.targetGradeY,
+      gMin: d.gradingMinY,
+      g3: d.grading3Y,
+      g4: d.grading4Y,
+      g5: d.grading5Y,
+      gMax: d.gradingMaxY,
+    }));
+
+    const gLess = formatted.map((d) => [d.time, d.gMin]);
+    const gMin = formatted.map((d) => [d.time, d.g3 - d.gMin]);
+    const g3 = formatted.map((d) => [d.time, d.g4 - d.g3]);
+    const g4 = formatted.map((d) => [d.time, d.g5 - d.g4]);
+    const g5 = formatted.map((d) => [d.time, d.gMax - d.g5]);
+
+    return {
+      grid: {
+        left: 0,
+        right: 0,
+        top: 20,
+        bottom: 0,
+      },
+
+      tooltip: {
+        trigger: 'axis',
+        showContent: false,
+      },
+
+      legend: { show: false },
+
+      xAxis: { type: 'time' },
+
+      yAxis: {
+        type: 'value',
+        min: 0,
+        max: 1,
+        axisLabel: { show: false },
+        splitLine: { show: false },
+        axisLine: { show: false },
+        axisTick: { show: false },
+      },
+
+      series: [
+        {
+          type: 'line',
+          data: gLess,
+          stack: 'zones',
+          symbol: 'none',
+          smooth: true,
+          lineStyle: { opacity: 0 },
+          areaStyle: { color: 'rgba(55, 58, 64, 0.5)' },
+        },
+        {
+          type: 'line',
+          data: gMin,
+          stack: 'zones',
+          symbol: 'none',
+          smooth: true,
+          lineStyle: { opacity: 0 },
+          areaStyle: { color: 'rgba(255, 77, 77, 0.5)' },
+        },
+        {
+          type: 'line',
+          data: g3,
+          stack: 'zones',
+          symbol: 'none',
+          smooth: true,
+          lineStyle: { opacity: 0 },
+          areaStyle: { color: 'rgba(255, 204, 0, 0.5)' },
+        },
+        {
+          type: 'line',
+          data: g4,
+          stack: 'zones',
+          symbol: 'none',
+          smooth: true,
+          lineStyle: { opacity: 0 },
+          areaStyle: { color: 'rgba(0, 123, 255, 0.5)' },
+        },
+        {
+          type: 'line',
+          data: g5,
+          stack: 'zones',
+          symbol: 'none',
+          smooth: true,
+          lineStyle: { opacity: 0 },
+          areaStyle: { color: 'rgba(40, 167, 69, 0.5)' },
+        },
+        {
+          name: 'Current',
+          type: 'line',
+          showSymbol: false,
+          smooth: true,
+          z: 10,
+          itemStyle: { color: 'white' },
+          data: formatted.map((d) => [d.time, d.current]),
+        },
+        {
+          name: 'Target',
+          type: 'line',
+          showSymbol: false,
+          smooth: true,
+          z: 10,
+          lineStyle: { type: 'dashed' },
+          itemStyle: { color: 'rgba(40, 167, 69, 1)' },
+          data: formatted.map((d) => [d.time, d.target]),
+        },
+      ],
+    };
+  });
+
+  // -------------------------------------------------------------- //
+
   private createTaskForm(task?: Task): FormGroup {
     const subjectId = untracked(() => this.savedSubject()?.id);
     const group = this.formBuilder.group({
@@ -340,7 +520,10 @@ export class SubjectViewComponent implements OnInit {
       dueDate: [task?.dueDate || null],
       receivedGrade: [task?.receivedGrade || 0, [Validators.required, Validators.min(0)]],
       maxGrade: [task?.maxGrade || 0, [Validators.required, Validators.min(0)]],
-      gradeWeight: [task?.gradeWeight || 1, [Validators.required, Validators.min(0)]],
+      gradeWeight: [
+        task?.gradeWeight != null ? task?.gradeWeight : 1,
+        [Validators.required, Validators.min(0)],
+      ],
       type: [task?.type || 'HOMEWORK', [Validators.required]],
       position: [task?.position || this.taskForms.length, [Validators.required]],
       subjectId: [subjectId, [Validators.required]],
@@ -405,9 +588,22 @@ export class SubjectViewComponent implements OnInit {
   private updateCurrentScore() {
     const total = this.taskForms.controls.reduce((sum, control) => {
       const raw = control.getRawValue();
-      return sum + (Number(raw.receivedGrade) || 0) * (Number(raw.gradeWeight) || 1);
+      return sum + (Number(raw.receivedGrade) || 0) * Number(raw.gradeWeight || 0);
     }, 0);
-    this.currentScore.set(total);
+
+    let score = 0;
+
+    if (!this.isEvaluationTypeAverage()) {
+      score = total;
+    } else {
+      const weights = this.taskForms.controls.reduce((sum, control) => {
+        const raw = control.getRawValue();
+        return sum + (raw.receivedGrade * raw.gradeWeight > 0 ? Number(raw.gradeWeight) : 0);
+      }, 0);
+      score = weights !== 0 ? total / weights : 0;
+    }
+
+    this.currentScore.set(Number(score.toFixed(2)));
   }
 
   getMaxGradeSum(): number {
@@ -475,7 +671,7 @@ export class SubjectViewComponent implements OnInit {
 
   missingScore = computed(() => {
     const v = this.savedSubject();
-    if (!v) return 0;
+    if (!v) return '0';
 
     const gradings = [
       Number(v.gradingMin) || 0,
@@ -486,12 +682,11 @@ export class SubjectViewComponent implements OnInit {
     ];
 
     const targetValue = gradings[v.targetGrade] || 0;
-    return Math.max(0, targetValue - this.currentScore());
+    return Math.max(0, targetValue - this.currentScore()).toFixed(2);
   });
 
   onAddTask() {
     if (this.taskForms.length >= 20) {
-      console.log('Максимум 20 задач на предмет');
       return;
     }
 

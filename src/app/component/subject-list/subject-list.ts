@@ -87,12 +87,13 @@ export class SubjectList {
         teacher: '',
         description: '',
         gradingType: 'GRADE',
-        gradingMax: 0,
-        grading5: 0,
-        grading4: 0,
-        grading3: 0,
+        evaluationType: 'TOTAL',
+        gradingMax: 5,
+        grading5: 5,
+        grading4: 4,
+        grading3: 3,
         gradingMin: 0,
-        targetGrade: 0,
+        targetGrade: 1,
         publicity: 'PUBLIC',
       })
       .subscribe({

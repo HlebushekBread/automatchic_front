@@ -11,6 +11,11 @@ export const GradingTypeTranslation: Record<string, string> = {
   EXAM: 'Экзамен',
 };
 
+export const evaluationTypeTranslation: Record<string, string> = {
+  TOTAL: 'Сумма',
+  AVERAGE: 'Средняя',
+};
+
 export const PublicityTranslation: Record<string, string> = {
   PRIVATE: 'Приватный',
   PUBLIC: 'Публичный',
@@ -83,6 +88,7 @@ export interface FullSubject {
   teacher: string;
   description: string;
   gradingType: string;
+  evaluationType: string;
   gradingMax: number;
   grading5: number;
   grading4: number;
@@ -100,6 +106,7 @@ export interface BasicSubject {
   name: string;
   teacher: string;
   gradingType: string;
+  evaluationType: string;
   publicity: string;
   user: User;
   tasksAmount: number;
@@ -112,6 +119,7 @@ export interface SubjectDto {
   teacher: string;
   description: string;
   gradingType: string;
+  evaluationType: string;
   gradingMax: number;
   grading5: number;
   grading4: number;

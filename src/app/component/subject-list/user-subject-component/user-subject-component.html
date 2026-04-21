@@ -49,7 +49,7 @@
             gradeInfo[subject().targetGrade + 2].translation
           }}</span>
           -
-          @if (getMissingScore() > 0) {
+          @if (getMissingScore() !== '0') {
             осталось <span class="active-text">{{ getMissingScore() }}</span>
           } @else {
             <span class="active-text">цель достигнута!</span>

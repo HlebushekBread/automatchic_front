@@ -17,6 +17,9 @@
 
             <div class="info-column">
               <label class="info-label">Оценивание</label>
+              <span class="info-field">{{
+                evaluationTypeTranslation[subject().evaluationType]
+              }}</span>
               <span class="info-field">{{ gradingTypeTranslation[subject().gradingType] }}</span>
 
               <div class="info-group">
@@ -40,7 +43,11 @@
                         {{ gradeInfo[field.grade + 2].thresholdTranslation }}
                       </label>
 
-                      <span class="info-field grading">{{ field.grading }}</span>
+                      @if (subject().evaluationType !== 'AVERAGE') {
+                        <span class="info-field grading">{{ field.grading }}</span>
+                      } @else {
+                        <span class="info-field grading">-</span>
+                      }
                     </div>
                   }
                 }
