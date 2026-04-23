@@ -367,30 +367,39 @@ export class SubjectViewComponent implements OnInit {
   onShowProgress() {
     this.isProgressModalOpen.set(true);
 
-    this.progressService.getChartDataById(this.savedSubject().id).subscribe((data) => {
-      this.rawChartData.set(data);
+    this.progressService
+      .getChartDataById(this.savedSubject().id, this.interval)
+      .subscribe((data) => {
+        this.rawChartData.set(data);
 
-      setTimeout(() => {
-        this.scrollChart?.nativeElement.scrollTo({
-          left: this.scrollChart.nativeElement.scrollWidth,
-          behavior: 'smooth',
+        setTimeout(() => {
+          this.scrollChart?.nativeElement.scrollTo({
+            left: this.scrollChart.nativeElement.scrollWidth,
+            behavior: 'smooth',
+          });
+
+          window.dispatchEvent(new Event('resize'));
         });
-
-        window.dispatchEvent(new Event('resize'));
       });
-    });
   }
 
   onHideProgress() {
     this.isProgressModalOpen.set(false);
   }
 
+  interval = 10 * 1000;
+  pxPerInterval = 10;
+
   chartWidth = computed(() => {
     const data = this.rawChartData();
-    if (!data) return 0;
+    if (!data || data.length === 0) return 0;
 
-    const pxPerPoint = 30;
-    return Math.max(data.length * pxPerPoint, 600);
+    const first = new Date(data[0].timestampX).getTime();
+    const last = new Date(data[data.length - 1].timestampX).getTime();
+
+    const totalIntervals = Math.ceil((last - first) / this.interval);
+
+    return Math.max(totalIntervals * this.pxPerInterval, 600);
   });
 
   chartOption = computed(() => {
@@ -398,6 +407,8 @@ export class SubjectViewComponent implements OnInit {
     if (!data) return {};
 
     const formatted = data.map((d) => ({
+      currentReal: d.currentScoreReal,
+      targetReal: d.targetScoreReal,
       time: new Date(d.timestampX),
       current: d.currentScoreY,
       target: d.targetGradeY,
@@ -423,13 +434,48 @@ export class SubjectViewComponent implements OnInit {
       },
 
       tooltip: {
+        backgroundColor: '#1a1b1e',
+        borderColor: '#1a1b1e',
+        textStyle: {
+          color: '#f4f4f5',
+        },
         trigger: 'axis',
-        showContent: false,
+        formatter: (params: any[]) => {
+          if (!params || !params.length) return '';
+
+          const current = params.find((p) => p.seriesName === 'Current');
+          if (!current || !current.data) return '';
+
+          const point = current.data;
+          const real = point.real;
+
+          if (!real) return '';
+
+          return `
+            <div style="line-height: 1.5;">
+              <span style="color: #a1a1aa; font-size: 12px;">
+                ${new Date(point.value[0]).toLocaleString()}
+              </span><br/>
+              <span style="font-weight: 500;">
+                Балл: ${real.current.toFixed(2)}
+              </span>
+            </div>
+          `;
+        },
       },
 
       legend: { show: false },
 
-      xAxis: { type: 'time' },
+      xAxis: {
+        type: 'time',
+
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: '#333',
+          },
+        },
+      },
 
       yAxis: {
         type: 'value',
@@ -447,7 +493,7 @@ export class SubjectViewComponent implements OnInit {
           data: gLess,
           stack: 'zones',
           symbol: 'none',
-          smooth: true,
+          step: 'end',
           lineStyle: { opacity: 0 },
           areaStyle: { color: 'rgba(55, 58, 64, 0.5)' },
         },
@@ -456,7 +502,7 @@ export class SubjectViewComponent implements OnInit {
           data: gMin,
           stack: 'zones',
           symbol: 'none',
-          smooth: true,
+          step: 'end',
           lineStyle: { opacity: 0 },
           areaStyle: { color: 'rgba(255, 77, 77, 0.5)' },
         },
@@ -465,7 +511,7 @@ export class SubjectViewComponent implements OnInit {
           data: g3,
           stack: 'zones',
           symbol: 'none',
-          smooth: true,
+          step: 'end',
           lineStyle: { opacity: 0 },
           areaStyle: { color: 'rgba(255, 204, 0, 0.5)' },
         },
@@ -474,7 +520,7 @@ export class SubjectViewComponent implements OnInit {
           data: g4,
           stack: 'zones',
           symbol: 'none',
-          smooth: true,
+          step: 'end',
           lineStyle: { opacity: 0 },
           areaStyle: { color: 'rgba(0, 123, 255, 0.5)' },
         },
@@ -483,7 +529,7 @@ export class SubjectViewComponent implements OnInit {
           data: g5,
           stack: 'zones',
           symbol: 'none',
-          smooth: true,
+          step: 'end',
           lineStyle: { opacity: 0 },
           areaStyle: { color: 'rgba(40, 167, 69, 0.5)' },
         },
@@ -491,16 +537,22 @@ export class SubjectViewComponent implements OnInit {
           name: 'Current',
           type: 'line',
           showSymbol: false,
-          smooth: true,
+          step: 'end',
           z: 10,
-          itemStyle: { color: 'white' },
-          data: formatted.map((d) => [d.time, d.current]),
+          itemStyle: { color: 'rgb(244, 244, 245, 1)' },
+          data: formatted.map((d) => ({
+            value: [d.time, d.current],
+            real: {
+              current: d.currentReal,
+              target: d.targetReal,
+            },
+          })),
         },
         {
           name: 'Target',
           type: 'line',
           showSymbol: false,
-          smooth: true,
+          step: 'end',
           z: 10,
           lineStyle: { type: 'dashed' },
           itemStyle: { color: 'rgba(40, 167, 69, 1)' },
