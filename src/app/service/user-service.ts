@@ -21,14 +21,14 @@ export class UserService {
   private http = inject(HttpClient);
 
   saveUser(data: { fullName: string; group: string }): Observable<{ token: string }> {
-    return this.http.patch<{ token: string }>(`${environment.apiUrl}/users/update/self`, data);
+    return this.http.patch<{ token: string }>(`${environment.apiUrl}/users/self/update`, data);
   }
 
   deleteSelf(): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/users/delete/self`);
+    return this.http.delete<void>(`${environment.apiUrl}/users/self/delete`);
   }
 
   checkEnabledSelf(): Observable<boolean> {
-    return this.http.get<boolean>(`${environment.apiUrl}/users/check/self`);
+    return this.http.get<boolean>(`${environment.apiUrl}/users/self/check`);
   }
 }

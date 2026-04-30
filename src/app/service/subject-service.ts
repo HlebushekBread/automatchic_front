@@ -143,9 +143,9 @@ export class SubjectService {
 
   getById(preview: boolean, id: number): Observable<FullSubject> {
     if (preview) {
-      return this.http.get<FullSubject>(`${environment.apiUrl}/subjects/preview/${id}`);
+      return this.http.get<FullSubject>(`${environment.apiUrl}/subjects/${id}/preview`);
     } else {
-      return this.http.get<FullSubject>(`${environment.apiUrl}/subjects/view/${id}`);
+      return this.http.get<FullSubject>(`${environment.apiUrl}/subjects/${id}/view`);
     }
   }
 
@@ -159,7 +159,7 @@ export class SubjectService {
   }
 
   getUserSubjects(): Observable<FullSubject[]> {
-    return this.http.get<FullSubject[]>(`${environment.apiUrl}/subjects/user`);
+    return this.http.get<FullSubject[]>(`${environment.apiUrl}/subjects/self`);
   }
 
   saveSubject(data: SubjectDto): Observable<{ id: number }> {
@@ -167,10 +167,10 @@ export class SubjectService {
   }
 
   copySubject(id: number): Observable<{ id: number }> {
-    return this.http.get<{ id: number }>(`${environment.apiUrl}/subjects/copy/${id}`);
+    return this.http.get<{ id: number }>(`${environment.apiUrl}/subjects/${id}/copy`);
   }
 
   deleteSubject(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/subjects/delete/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/subjects/${id}/delete`);
   }
 }

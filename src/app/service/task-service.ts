@@ -64,10 +64,10 @@ export class TaskService {
   }
 
   deleteTask(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/tasks/delete/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/tasks/${id}/delete`);
   }
 
   getScheduled(): Observable<BasicTask[]> {
-    return this.http.get<BasicTask[]>(`${environment.apiUrl}/tasks/scheduled/self`);
+    return this.http.get<BasicTask[]>(`${environment.apiUrl}/tasks/self/scheduled`);
   }
 }
