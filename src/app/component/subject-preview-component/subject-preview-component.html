@@ -144,9 +144,11 @@
                 </div>
                 <div class="label-wrapper date-field">
                   <label>Дата сдачи</label>
-                  <span class="task-span date-field"
-                    >{{ task.dueDate | date: 'dd.MM' }} ({{ task.dueDate | date: 'EE' }})</span
-                  >
+                  <span class="task-span date-field">{{
+                    task.dueDate
+                      ? (task.dueDate | date: 'dd.MM') + ' (' + (task.dueDate | date: 'EE') + ')'
+                      : '--.--'
+                  }}</span>
                 </div>
                 <div class="label-wrapper max-field">
                   <label>Макс.</label>

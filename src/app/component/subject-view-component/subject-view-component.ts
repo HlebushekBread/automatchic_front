@@ -1,14 +1,11 @@
 import {
-  afterNextRender,
   ChangeDetectorRef,
   Component,
   computed,
-  effect,
   ElementRef,
   inject,
   OnInit,
   signal,
-  untracked,
   ViewChild,
 } from '@angular/core';
 import {
@@ -17,7 +14,7 @@ import {
   GradeInfo,
   GradingTypeTranslation,
   PublicityTranslation,
-  SubjectDto,
+  SubjectRequest,
   SubjectService,
 } from '../../service/subject-service';
 import { CommonModule } from '@angular/common';
@@ -83,8 +80,7 @@ export class SubjectViewComponent implements OnInit {
 
   subjectForm!: FormGroup;
   tasks = signal<Task[]>([]);
-  savedSubject = signal<SubjectDto>({
-    id: 0,
+  savedSubject = signal<SubjectRequest>({
     name: '',
     teacher: '',
     description: '',
@@ -98,6 +94,7 @@ export class SubjectViewComponent implements OnInit {
     targetGrade: 0,
     publicity: '',
   });
+  subjectId = signal<number>(0);
 
   ngOnInit() {
     this.subjectForm.disable();
@@ -116,6 +113,7 @@ export class SubjectViewComponent implements OnInit {
           }
           this.errorMessage.set('');
           this.patchSubjectForm(subject);
+          this.subjectId.set(subject.id);
           this.adjustFields();
           this.savedSubject.set(this.subjectForm.getRawValue());
           this.tasks.set(subject.tasks);
@@ -133,7 +131,6 @@ export class SubjectViewComponent implements OnInit {
   constructor() {
     this.subjectForm = this.formBuilder.group(
       {
-        id: [null, [Validators.required]],
         name: [null, [Validators.required]],
         teacher: [null],
         description: [null],
@@ -184,9 +181,8 @@ export class SubjectViewComponent implements OnInit {
     return hasError ? { gradingChain: errors } : null;
   };
 
-  private patchSubjectForm(subject: FullSubject | SubjectDto) {
+  private patchSubjectForm(subject: FullSubject | SubjectRequest) {
     this.subjectForm.patchValue({
-      id: subject.id,
       name: subject.name,
       teacher: subject.teacher,
       description: subject.description,
@@ -269,20 +265,20 @@ export class SubjectViewComponent implements OnInit {
 
   onSubmit() {
     this.adjustFields();
+
     if (this.subjectForm.invalid) {
       this.subjectForm.markAllAsTouched();
       return;
     }
-    this.updateCurrentScore();
 
-    const formValue = this.subjectForm.getRawValue();
+    const formValue: SubjectRequest = this.subjectForm.getRawValue();
+
     this.isEdit.set(false);
     this.subjectForm.disable();
 
-    this.subjectService.saveSubject(formValue).subscribe({
+    this.subjectService.updateSubject(this.subjectId()!, formValue).subscribe({
       next: () => {
-        this.savedSubject.set(formValue);
-        this.patchSubjectForm(formValue);
+        this.savedSubject.set({ ...formValue });
       },
     });
   }
@@ -299,7 +295,7 @@ export class SubjectViewComponent implements OnInit {
   onDelete() {
     this.isEdit.set(false);
     this.subjectForm.disable();
-    this.subjectService.deleteSubject(this.subjectForm.getRawValue().id).subscribe({
+    this.subjectService.deleteSubject(this.subjectId()).subscribe({
       next: () => {
         this.isDeleteModalOpen.set(false);
         this.router.navigate(['/subjects/view']);
@@ -365,20 +361,18 @@ export class SubjectViewComponent implements OnInit {
   @ViewChild('scrollChart') scrollChart!: ElementRef;
 
   onUpdateProgress() {
-    this.progressService
-      .getChartDataById(this.savedSubject().id, this.interval)
-      .subscribe((data) => {
-        this.rawChartData.set(data);
+    this.progressService.getChartDataById(this.subjectId()!, this.interval).subscribe((data) => {
+      this.rawChartData.set(data);
 
-        setTimeout(() => {
-          this.scrollChart?.nativeElement.scrollTo({
-            left: this.scrollChart.nativeElement.scrollWidth,
-            behavior: 'smooth',
-          });
-
-          window.dispatchEvent(new Event('resize'));
+      setTimeout(() => {
+        this.scrollChart?.nativeElement.scrollTo({
+          left: this.scrollChart.nativeElement.scrollWidth,
+          behavior: 'smooth',
         });
+
+        window.dispatchEvent(new Event('resize'));
       });
+    });
   }
 
   onHideProgress() {
@@ -572,7 +566,7 @@ export class SubjectViewComponent implements OnInit {
   // -------------------------------------------------------------- //
 
   private createTaskForm(task?: Task): FormGroup {
-    const subjectId = untracked(() => this.savedSubject()?.id);
+    const subjectId = this.subjectId();
     const group = this.formBuilder.group({
       id: [task?.id || 0, [Validators.required]],
       name: [task?.name || 'Название', [Validators.required]],
@@ -700,7 +694,7 @@ export class SubjectViewComponent implements OnInit {
     }
 
     const formValue = this.subjectForm.getRawValue();
-    this.subjectService.saveSubject(formValue).subscribe({
+    this.subjectService.updateSubject(formValue.id, formValue).subscribe({
       next: () => {
         this.savedSubject.set({
           ...this.savedSubject(),
@@ -754,7 +748,7 @@ export class SubjectViewComponent implements OnInit {
 
     console.log(newGroup.getRawValue());
 
-    this.taskService.saveTask(newGroup.getRawValue()).subscribe({
+    this.taskService.createTask(this.subjectId(), newGroup.getRawValue()).subscribe({
       next: (response) => {
         newGroup.patchValue({ id: response.id });
         this.taskForms.push(newGroup);
@@ -776,7 +770,7 @@ export class SubjectViewComponent implements OnInit {
 
     const taskData = group.getRawValue();
     console.log(taskData);
-    this.taskService.saveTask(taskData).subscribe({
+    this.taskService.updateTask(taskData.id, taskData).subscribe({
       next: () => {
         this.updateCurrentScore();
       },

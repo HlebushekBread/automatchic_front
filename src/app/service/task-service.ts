@@ -49,14 +49,27 @@ export interface BasicTask {
   subjectId: number;
 }
 
+export interface TaskRequest {
+  name: string;
+  type: string;
+  dueDate: Date;
+  maxGrade: number;
+  receivedGrade: number;
+  gradeWeight: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
   private http = inject(HttpClient);
 
-  saveTask(data: FullTask): Observable<{ id: number }> {
-    return this.http.put<{ id: number }>(`${environment.apiUrl}/tasks/save`, data);
+  createTask(subjectId: number, data: TaskRequest): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(`${environment.apiUrl}/tasks/new/${subjectId}`, data);
+  }
+
+  updateTask(id: number, data: TaskRequest): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/tasks/${id}/update`, data);
   }
 
   updateTaskPositions(positions: { id: number; position: number }[]) {

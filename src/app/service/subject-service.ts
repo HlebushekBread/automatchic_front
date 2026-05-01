@@ -113,8 +113,7 @@ export interface BasicSubject {
   linksAmount: number;
 }
 
-export interface SubjectDto {
-  id: number;
+export interface SubjectRequest {
   name: string;
   teacher: string;
   description: string;
@@ -162,8 +161,12 @@ export class SubjectService {
     return this.http.get<FullSubject[]>(`${environment.apiUrl}/subjects/self`);
   }
 
-  saveSubject(data: SubjectDto): Observable<{ id: number }> {
-    return this.http.put<{ id: number }>(`${environment.apiUrl}/subjects/save`, data);
+  createSubject(data: SubjectRequest): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(`${environment.apiUrl}/subjects/new`, data);
+  }
+
+  updateSubject(id: number, data: SubjectRequest): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/subjects/${id}/update`, data);
   }
 
   copySubject(id: number): Observable<{ id: number }> {

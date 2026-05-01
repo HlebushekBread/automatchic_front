@@ -81,8 +81,7 @@ export class SubjectList {
 
   onCreate(name: string) {
     this.subjectService
-      .saveSubject({
-        id: 0,
+      .createSubject({
         name: name || 'Название',
         teacher: '',
         description: '',
