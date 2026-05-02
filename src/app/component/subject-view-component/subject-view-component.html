@@ -162,11 +162,10 @@
             <div style="display: flex; gap: 10px">
               <button class="chart-input" (click)="onUpdateProgress()">Обновить</button>
               <select class="chart-input" (change)="onIntervalChange($event)">
-                <option value="10000">10s</option>
-                <option value="300000">5m</option>
                 <option value="3600000">1h</option>
                 <option value="21600000">6h</option>
-                <option value="86400000">1d</option>
+                <option value="86400000" selected="true">1d</option>
+                <option value="604800000">7d</option>
               </select>
             </div>
             <button class="score-button" (click)="isProgressModalOpen.set(false)">

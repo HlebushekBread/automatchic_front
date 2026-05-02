@@ -379,7 +379,7 @@ export class SubjectViewComponent implements OnInit {
     this.isProgressModalOpen.set(false);
   }
 
-  interval = 10000;
+  interval = 86400000;
   pxPerInterval = 10;
 
   onIntervalChange(event: Event) {
