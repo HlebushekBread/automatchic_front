@@ -199,7 +199,7 @@ export class SubjectViewComponent implements OnInit {
   }
 
   //Это работает только с https
-  /*
+
   onCopyLink() {
     const url = window.location.href;
 
@@ -212,9 +212,9 @@ export class SubjectViewComponent implements OnInit {
         console.error('Ошибка копирования:', err);
       });
   }
-  */
 
   //А эта хтонь работает и для http
+  /*
   onCopyLink() {
     const url = window.location.href;
     const textToCopy = url.replace('view', 'browse');
@@ -254,6 +254,7 @@ export class SubjectViewComponent implements OnInit {
 
     document.body.removeChild(textArea);
   }
+  */
   //Снести неописуемый ужас сверху при переходе на https
 
   isEdit = signal(false);

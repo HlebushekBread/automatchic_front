@@ -265,7 +265,9 @@
               </div>
             </div>
           </div>
-          <button class="score-button" (click)="recalculate()">Пересчитать максимум</button>
+          @if (savedSubject().evaluationType != 'AVERAGE') {
+            <button class="score-button" (click)="recalculate()">Пересчитать максимум</button>
+          }
         </div>
         <div [formGroup]="taskGroup" style="display: flex; justify-content: center">
           <div
